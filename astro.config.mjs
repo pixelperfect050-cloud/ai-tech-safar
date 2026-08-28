@@ -6,8 +6,9 @@ import { defineConfig, fontProviders } from 'astro/config';
 
 export default defineConfig({
 	site: 'https://www.aitechsafar.com',
+	trailingSlash: 'never',
 	build: {
-		format: 'file'
+		format: 'directory'
 	},
 	integrations: [mdx(), sitemap()],
 	fonts: [

@@ -13,7 +13,14 @@ interface Props {
 	image?: ImageMetadata;
 }
 
-const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+let pathname = Astro.url.pathname;
+// Remove index.html or .html if present (causes 308 redirects on Vercel)
+pathname = pathname.replace(/(index)?\.html$/, '');
+// Remove trailing slash if present (except for root '/')
+if (pathname.length > 1 && pathname.endsWith('/')) {
+	pathname = pathname.slice(0, -1);
+}
+const canonicalURL = new URL(pathname, Astro.site);
 
 const { title, description, image = FallbackImage } = Astro.props;
 ---
