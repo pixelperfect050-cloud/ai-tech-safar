@@ -31,11 +31,27 @@ export async function getStaticPaths() {
 const { post } = Astro.props;
 const { Content } = await render(post);
 
+// Fetch all posts for Related Posts section
+const allPosts = await getCollection('blog');
+
+// Calculate reading time (average 200 words per minute)
+const wordCount = post.body ? post.body.split(/\s+/).length : 0;
+const readingTime = Math.max(1, Math.ceil(wordCount / 200));
+
+// Related posts: same category, excluding current post, max 3
+const relatedPosts = allPosts
+  .filter(p => p.data.category === post.data.category && p.id !== post.id)
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 3);
+
 // Google AdSense Publisher ID (Synchronized with layout)
 const ADSENSE_PUBLISHER_ID = ""; // e.g. "ca-pub-XXXXXXXXXXXXXXXX"
 
 // Structured Data for Google Rich Snippets (SEO)
 const articleURL = new URL(Astro.url.pathname, Astro.site).toString();
+const siteUrl = Astro.site?.toString() || "https://www.aitechsafar.com";
+
+// BlogPosting Schema
 const schema = {
   "@context": "https://schema.org",
   "@type": "BlogPosting",
@@ -44,6 +60,7 @@ const schema = {
   "image": post.data.heroImage ? (post.data.heroImage.startsWith('http') ? post.data.heroImage : new URL(post.data.heroImage, Astro.site).toString()) : undefined,
   "datePublished": post.data.pubDate.toISOString(),
   "dateModified": post.data.updatedDate ? post.data.updatedDate.toISOString() : post.data.pubDate.toISOString(),
+  "wordCount": wordCount,
   "author": {
     "@type": "Person",
     "name": post.data.author
@@ -59,7 +76,33 @@ const schema = {
   "mainEntityOfPage": {
     "@type": "WebPage",
     "@id": articleURL
-  }
+  },
+  "keywords": (post.data.tags || []).join(", ")
+};
+
+// BreadcrumbList Schema for Google breadcrumb navigation
+const breadcrumbSchema = {
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": siteUrl
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": post.data.category,
+      "item": `${siteUrl}/search/label/${encodeURIComponent(post.data.category)}`
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": post.data.title
+    }
+  ]
 };
 ---
 
@@ -73,7 +116,24 @@ const schema = {
   category={post.data.category}
   schema={schema}
 >
+  <!-- BreadcrumbList Schema -->
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} slot="head" />
+  
+  <!-- Article Tag Meta for Social Crawlers -->
+  {(post.data.tags || []).map(tag => (
+    <meta property="article:tag" content={tag} slot="head" />
+  ))}
+
   <article class="article-container">
+    <!-- Breadcrumb Navigation -->
+    <nav class="breadcrumb" aria-label="Breadcrumb">
+      <ol>
+        <li><a href="/">Home</a></li>
+        <li><a href={`/search/label/${encodeURIComponent(post.data.category)}`}>{post.data.category}</a></li>
+        <li aria-current="page">{post.data.title}</li>
+      </ol>
+    </nav>
+
     <!-- Header -->
     <header class="article-header">
       <div style="margin-bottom: 0.5rem;">
@@ -96,6 +156,8 @@ const schema = {
             </span>
           </>
         )}
+        <span>•</span>
+        <span>{readingTime} min read</span>
       </div>
     </header>
 
@@ -133,6 +195,16 @@ const schema = {
       <Content />
     </div>
 
+    <!-- Tags -->
+    {post.data.tags && post.data.tags.length > 0 && (
+      <div class="article-tags">
+        <span class="tags-label">Tags:</span>
+        {post.data.tags.map(tag => (
+          <span class="tag-chip">{tag}</span>
+        ))}
+      </div>
+    )}
+
     <!-- Footer Ad Slot -->
     <div class="ad-slot-container" style="min-height: 150px; margin-top: 3rem;">
       <div class="ad-slot-label">Advertisement</div>
@@ -150,5 +222,156 @@ const schema = {
         )}
       </div>
     </div>
+
+    <!-- Related Posts Section (Internal Linking for SEO) -->
+    {relatedPosts.length > 0 && (
+      <section class="related-posts-section">
+        <h3 class="related-posts-title">Related Articles</h3>
+        <div class="related-posts-grid">
+          {relatedPosts.map(rp => (
+            <a href={`/${rp.id}.html`} class="related-post-card">
+              {rp.data.heroImage && (
+                <img 
+                  src={rp.data.heroImage} 
+                  alt={rp.data.title} 
+                  class="related-post-image"
+                  loading="lazy"
+                />
+              )}
+              <div class="related-post-content">
+                <span class="badge small">{rp.data.category}</span>
+                <h4 class="related-post-title">{rp.data.title}</h4>
+                <span class="related-post-date">
+                  <FormattedDate date={rp.data.pubDate} />
+                </span>
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
   </article>
 </Layout>
+
+<style>
+  .breadcrumb {
+    margin-bottom: 1.5rem;
+    font-size: 0.85rem;
+    color: var(--text-muted);
+  }
+  .breadcrumb ol {
+    display: flex;
+    flex-wrap: wrap;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    gap: 0.25rem;
+  }
+  .breadcrumb li:not(:last-child)::after {
+    content: '›';
+    margin-left: 0.4rem;
+    color: var(--text-muted);
+  }
+  .breadcrumb a {
+    color: var(--accent-primary);
+    text-decoration: none;
+  }
+  .breadcrumb a:hover {
+    text-decoration: underline;
+  }
+  .breadcrumb [aria-current="page"] {
+    color: var(--text-secondary);
+    max-width: 300px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .article-tags {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 2.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--border-color);
+  }
+  .tags-label {
+    font-weight: 600;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+  }
+  .tag-chip {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background: var(--bg-tertiary, rgba(255,255,255,0.05));
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    transition: all 0.2s ease;
+  }
+  .tag-chip:hover {
+    background: var(--accent-primary);
+    color: white;
+    border-color: var(--accent-primary);
+  }
+
+  .related-posts-section {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 2px solid var(--border-color);
+  }
+  .related-posts-title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    color: var(--text-primary);
+  }
+  .related-posts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+  .related-post-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    overflow: hidden;
+    text-decoration: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .related-post-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+  }
+  .related-post-image {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+  }
+  .related-post-content {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .related-post-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.4;
+    margin: 0;
+  }
+  .related-post-date {
+    font-size: 0.78rem;
+    color: var(--text-muted);
+  }
+  .badge.small {
+    font-size: 0.7rem;
+    padding: 0.15rem 0.5rem;
+  }
+</style>
+

@@ -37,9 +37,23 @@ const schema = {
     "query-input": "required name=search_term_string"
   }
 };
+
+// ItemList Schema for Google Carousel Rich Snippets
+const itemListSchema = {
+  "@context": "https://schema.org",
+  "@type": "ItemList",
+  "itemListElement": posts.slice(0, 10).map((post, index) => ({
+    "@type": "ListItem",
+    "position": index + 1,
+    "url": `https://www.aitechsafar.com/${post.id}.html`,
+    "name": post.data.title
+  }))
+};
 ---
 
 <Layout title="Latest AI News, Tools & Trends" schema={schema}>
+  <!-- ItemList Schema for Google Carousel -->
+  <script type="application/ld+json" set:html={JSON.stringify(itemListSchema)} slot="head" />
   <div class="container">
     <div class="homepage-grid">
       <!-- Main Content Feed -->

@@ -1,4 +1,10 @@
 User-agent: *
 Allow: /
+Disallow: /admin/
 
+# Sitemaps
 Sitemap: https://www.aitechsafar.com/sitemap-index.xml
+Sitemap: https://www.aitechsafar.com/news-sitemap.xml
+
+# RSS Feed
+Allow: /rss.xml

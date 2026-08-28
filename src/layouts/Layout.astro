@@ -45,6 +45,20 @@ const ADSENSE_PUBLISHER_ID = "ca-pub-2049704089530737"; // e.g. "ca-pub-XXXXXXXX
   <!-- Canonical URL -->
   <link rel="canonical" href={canonicalURL} />
 
+  <!-- Language & Regional Targeting -->
+  <link rel="alternate" hreflang="en" href={canonicalURL} />
+  <link rel="alternate" hreflang="hi" href={canonicalURL} />
+  <link rel="alternate" hreflang="x-default" href={canonicalURL} />
+
+  <!-- Robots Directive -->
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+
+  <!-- Google Search Console Verification (Replace YOUR_CODE with your actual code) -->
+  <!-- <meta name="google-site-verification" content="YOUR_CODE" /> -->
+
+  <!-- RSS Autodiscovery -->
+  <link rel="alternate" type="application/rss+xml" title="AI Tech Safar RSS" href="/rss.xml" />
+
   <!-- Primary Meta Tags -->
   <title>{fullTitle}</title>
   <meta name="title" content={fullTitle} />
