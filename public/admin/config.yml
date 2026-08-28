@@ -1,18 +1,18 @@
 backend:
   name: github
-  repo: pixelperfect050-cloud/Vfend
-  branch: backup-before-auth-theme-otp # Active branch of your repository
+  repo: pixelperfect050-cloud/ai-tech-safar
+  branch: main # Active branch of your repository
   base_url: https://api.github.com
   auth_endpoint: https://oauth.decapcms.org/auth # Free OAuth provider gateway
 
 # Media assets configuration
-media_folder: "Ai Tech Safar/public/images/uploads"
+media_folder: "public/images/uploads"
 public_folder: "/images/uploads"
 
 collections:
   - name: "blog"
     label: "Blog Posts"
-    folder: "Ai Tech Safar/src/content/blog"
+    folder: "src/content/blog"
     # Match the dynamic routing format: /year/month/slug
     path: "{{year}}/{{month}}/{{slug}}"
     create: true
