@@ -280,7 +280,7 @@ export const prerender = true;
   </div>
 </div>
 
-<script>
+<script is:inline>
 // ===== Tab Navigation =====
 document.querySelectorAll('.tab-btn').forEach(btn => {
   btn.addEventListener('click', () => {
@@ -308,7 +308,8 @@ async function fetchKeywords() {
     
     await Promise.all(suffixes.map(async (suffix) => {
       try {
-        const resp = await fetch(`https://suggestqueries.google.com/complete/search?client=firefox&q=${encodeURIComponent(query + suffix)}`);
+        const targetUrl = `https://suggestqueries.google.com/complete/search?client=firefox&q=${encodeURIComponent(query + suffix)}`;
+        const resp = await fetch(`https://corsproxy.io/?${encodeURIComponent(targetUrl)}`);
         const data = await resp.json();
         if (data[1]) data[1].forEach(s => allSuggestions.add(s));
       } catch(e) { /* ignore individual failures */ }
