@@ -2,6 +2,7 @@ backend:
   name: github
   repo: pixelperfect050-cloud/ai-tech-safar
   branch: main # Active branch of your repository
+  auth_scope: repo # Required to read/write private repositories
   base_url: https://api.github.com
   auth_endpoint: https://oauth.decapcms.org/auth # Free OAuth provider gateway
 
