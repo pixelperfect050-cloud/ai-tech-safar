@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="robots" content="noindex, nofollow"/>
+  <title>SEO Article Writer — AI Tech Safar</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg-primary: #0a0a0f;
+      --bg-secondary: #12121a;
+      --bg-tertiary: #1a1a2e;
+      --text-primary: #e8e8f0;
+      --text-secondary: #a0a0b8;
+      --text-muted: #6a6a80;
+      --accent: #7c5cff;
+      --accent-hover: #9b7eff;
+      --green: #22c55e;
+      --yellow: #eab308;
+      --red: #ef4444;
+      --border: #2a2a3e;
+      --shadow: 0 4px 24px rgba(0,0,0,0.3);
+    }
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family:'Inter',sans-serif; background:var(--bg-primary); color:var(--text-primary); line-height:1.6; }
+    
+    .app-header { background:var(--bg-secondary); border-bottom:1px solid var(--border); padding:1rem 2rem; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:100; backdrop-filter:blur(12px); }
+    .app-header h1 { font-size:1.2rem; font-weight:700; }
+    .app-header h1 span { color:var(--accent); }
+    .header-links { display:flex; gap:1rem; }
+    .header-links a { color:var(--text-secondary); text-decoration:none; font-size:0.85rem; padding:0.4rem 0.8rem; border-radius:8px; transition:all 0.2s; }
+    .header-links a:hover { background:var(--bg-tertiary); color:var(--text-primary); }
+
+    .container { max-width:1400px; margin:0 auto; padding:2rem; }
+    
+    /* Tabs */
+    .tabs { display:flex; gap:0.5rem; margin-bottom:2rem; border-bottom:1px solid var(--border); padding-bottom:0; }
+    .tab-btn { padding:0.8rem 1.5rem; background:none; border:none; color:var(--text-muted); font-size:0.95rem; font-weight:600; cursor:pointer; border-bottom:3px solid transparent; transition:all 0.2s; font-family:inherit; }
+    .tab-btn:hover { color:var(--text-secondary); }
+    .tab-btn.active { color:var(--accent); border-bottom-color:var(--accent); }
+    .tab-content { display:none; }
+    .tab-content.active { display:block; }
+
+    /* Cards */
+    .card { background:var(--bg-secondary); border:1px solid var(--border); border-radius:16px; padding:1.5rem; margin-bottom:1.5rem; }
+    .card h3 { font-size:1.1rem; font-weight:700; margin-bottom:1rem; display:flex; align-items:center; gap:0.5rem; }
+    
+    /* Inputs */
+    input[type="text"], input[type="number"], textarea, select {
+      width:100%; padding:0.75rem 1rem; background:var(--bg-tertiary); border:1px solid var(--border); border-radius:10px;
+      color:var(--text-primary); font-family:inherit; font-size:0.95rem; outline:none; transition:border 0.2s;
+    }
+    input:focus, textarea:focus, select:focus { border-color:var(--accent); }
+    textarea { resize:vertical; min-height:150px; }
+    label { display:block; font-size:0.85rem; font-weight:600; color:var(--text-secondary); margin-bottom:0.4rem; }
+
+    /* Buttons */
+    .btn { padding:0.7rem 1.5rem; border:none; border-radius:10px; font-family:inherit; font-weight:600; font-size:0.9rem; cursor:pointer; transition:all 0.2s; display:inline-flex; align-items:center; gap:0.5rem; }
+    .btn-primary { background:var(--accent); color:#fff; }
+    .btn-primary:hover { background:var(--accent-hover); transform:translateY(-1px); }
+    .btn-primary:disabled { opacity:0.5; cursor:not-allowed; transform:none; }
+    .btn-secondary { background:var(--bg-tertiary); color:var(--text-primary); border:1px solid var(--border); }
+    .btn-secondary:hover { border-color:var(--accent); }
+    .btn-success { background:var(--green); color:#fff; }
+
+    /* Keyword Research */
+    .keyword-input-row { display:flex; gap:1rem; margin-bottom:1.5rem; }
+    .keyword-input-row input { flex:1; }
+    .keyword-chips { display:flex; flex-wrap:wrap; gap:0.5rem; }
+    .keyword-chip { padding:0.4rem 0.8rem; background:var(--bg-tertiary); border:1px solid var(--border); border-radius:20px; font-size:0.82rem; color:var(--text-secondary); cursor:pointer; transition:all 0.2s; }
+    .keyword-chip:hover { background:var(--accent); color:#fff; border-color:var(--accent); }
+    .keyword-chip.selected { background:var(--accent); color:#fff; border-color:var(--accent); }
+
+    /* SEO Score */
+    .seo-score-ring { width:120px; height:120px; margin:0 auto 1rem; position:relative; }
+    .seo-score-ring svg { transform:rotate(-90deg); }
+    .seo-score-ring .score-text { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:2rem; font-weight:800; }
+    .seo-checks { display:grid; gap:0.5rem; }
+    .seo-check { display:flex; align-items:center; gap:0.75rem; padding:0.6rem 0.8rem; border-radius:8px; background:var(--bg-tertiary); font-size:0.85rem; }
+    .seo-check .icon { font-size:1.1rem; flex-shrink:0; }
+    .seo-check .label { flex:1; color:var(--text-secondary); }
+    .seo-check .value { font-weight:600; font-size:0.8rem; }
+
+    /* Article Writer */
+    .writer-layout { display:grid; grid-template-columns:1fr 340px; gap:1.5rem; }
+    @media(max-width:900px) { .writer-layout { grid-template-columns:1fr; } }
+    .writer-editor textarea { min-height:500px; font-size:0.92rem; line-height:1.8; }
+    
+    /* AI Generator */
+    .gen-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1rem; }
+    @media(max-width:700px) { .gen-grid { grid-template-columns:1fr; } }
+    .gen-output { background:var(--bg-tertiary); border:1px solid var(--border); border-radius:12px; padding:1.5rem; min-height:300px; max-height:70vh; overflow-y:auto; white-space:pre-wrap; font-size:0.9rem; line-height:1.8; }
+    .gen-output h1,.gen-output h2,.gen-output h3 { color:var(--accent); margin:1.5rem 0 0.5rem; }
+    .gen-output blockquote { border-left:3px solid var(--accent); padding-left:1rem; margin:1rem 0; color:var(--text-secondary); }
+
+    /* Status bar */
+    .status-bar { display:flex; gap:1.5rem; padding:0.8rem 1.2rem; background:var(--bg-tertiary); border-radius:10px; font-size:0.82rem; color:var(--text-muted); margin-top:0.5rem; flex-wrap:wrap; }
+    .status-bar span strong { color:var(--text-secondary); }
+
+    /* API Key */
+    .api-key-row { display:flex; gap:0.75rem; align-items:end; margin-bottom:1.5rem; }
+    .api-key-row .input-group { flex:1; }
+    .api-key-row input { font-family:monospace; }
+    .saved-badge { color:var(--green); font-size:0.8rem; font-weight:600; }
+
+    /* Loading */
+    .loading { display:inline-block; width:18px; height:18px; border:2px solid var(--border); border-top-color:var(--accent); border-radius:50%; animation:spin 0.6s linear infinite; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    .generating-text { color:var(--accent); font-size:0.9rem; display:flex; align-items:center; gap:0.5rem; }
+  </style>
+</head>
+<body>
+
+<header class="app-header">
+  <h1>✍️ <span>SEO</span> Article Writer</h1>
+  <div class="header-links">
+    <a href="/admin/">← CMS Dashboard</a>
+    <a href="/">🏠 Site</a>
+  </div>
+</header>
+
+<div class="container">
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="keywords">🔍 Keyword Research</button>
+    <button class="tab-btn" data-tab="writer">✍️ Write + SEO Score</button>
+    <button class="tab-btn" data-tab="generator">🤖 AI Article Generator</button>
+  </div>
+
+  <!-- Tab 1: Keyword Research -->
+  <div class="tab-content active" id="tab-keywords">
+    <div class="card">
+      <h3>🔍 Keyword Research</h3>
+      <p style="color:var(--text-secondary);font-size:0.85rem;margin-bottom:1rem;">Enter a topic to discover related keywords from Google Autocomplete. Click any keyword to set it as your Focus Keyword.</p>
+      <div class="keyword-input-row">
+        <input type="text" id="keyword-input" placeholder="e.g. agentic ai, claude vs chatgpt, openai o3..." />
+        <button class="btn btn-primary" onclick="fetchKeywords()">Search Keywords</button>
+      </div>
+      <div id="keyword-results"></div>
+    </div>
+    <div class="card" id="focus-keyword-card" style="display:none;">
+      <h3>🎯 Focus Keyword Selected</h3>
+      <p style="font-size:1.1rem;font-weight:700;color:var(--accent);" id="focus-keyword-display"></p>
+      <p style="color:var(--text-secondary);font-size:0.85rem;margin-top:0.5rem;">This keyword will be used for SEO scoring in the Writer tab and as the primary keyword for AI generation.</p>
+    </div>
+  </div>
+
+  <!-- Tab 2: Writer + SEO Score -->
+  <div class="tab-content" id="tab-writer">
+    <div class="writer-layout">
+      <div>
+        <div class="card">
+          <h3>✍️ Article Editor</h3>
+          <div style="margin-bottom:1rem;">
+            <label>Article Title</label>
+            <input type="text" id="article-title" placeholder="Enter your SEO-optimized title..." oninput="updateSeoScore()"/>
+          </div>
+          <div style="margin-bottom:1rem;">
+            <label>Meta Description</label>
+            <textarea id="meta-desc" style="min-height:80px;" placeholder="Write a compelling 150-160 char description..." oninput="updateSeoScore()"></textarea>
+          </div>
+          <div style="margin-bottom:1rem;">
+            <label>Focus Keyword</label>
+            <input type="text" id="focus-keyword-writer" placeholder="Your target keyword..." oninput="updateSeoScore()"/>
+          </div>
+          <div>
+            <label>Article Body (Markdown)</label>
+            <textarea id="article-body" class="writer-editor" placeholder="Write your article in Markdown format...&#10;&#10;## First Section&#10;&#10;Start writing here..." oninput="updateSeoScore()"></textarea>
+          </div>
+          <div class="status-bar">
+            <span>Words: <strong id="word-count">0</strong></span>
+            <span>Characters: <strong id="char-count">0</strong></span>
+            <span>Headings: <strong id="heading-count">0</strong></span>
+            <span>Reading Time: <strong id="reading-time">0 min</strong></span>
+          </div>
+        </div>
+        <button class="btn btn-success" onclick="copyMarkdown()" style="margin-top:0.5rem;">📋 Copy as Markdown (for CMS)</button>
+      </div>
+      
+      <!-- SEO Score Sidebar -->
+      <div>
+        <div class="card" style="position:sticky;top:80px;">
+          <h3>📊 Live SEO Score</h3>
+          <div class="seo-score-ring">
+            <svg width="120" height="120" viewBox="0 0 120 120">
+              <circle cx="60" cy="60" r="52" fill="none" stroke="var(--border)" stroke-width="8"/>
+              <circle cx="60" cy="60" r="52" fill="none" stroke="var(--accent)" stroke-width="8" stroke-dasharray="327" stroke-dashoffset="327" stroke-linecap="round" id="score-circle"/>
+            </svg>
+            <div class="score-text" id="score-value">0</div>
+          </div>
+          <div class="seo-checks" id="seo-checks"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab 3: AI Article Generator -->
+  <div class="tab-content" id="tab-generator">
+    <div class="card">
+      <h3>🔑 Gemini API Key</h3>
+      <p style="color:var(--text-secondary);font-size:0.85rem;margin-bottom:1rem;">
+        Get your free API key from <a href="https://aistudio.google.com/apikey" target="_blank" style="color:var(--accent);">Google AI Studio</a>. 
+        It stays in your browser only — never sent to any server except Google's API.
+      </p>
+      <div class="api-key-row">
+        <div class="input-group">
+          <label>API Key</label>
+          <input type="text" id="api-key" placeholder="AIzaSy..." />
+        </div>
+        <button class="btn btn-primary" onclick="saveApiKey()">Save</button>
+      </div>
+      <span class="saved-badge" id="api-saved" style="display:none;">✓ Saved to browser</span>
+    </div>
+    
+    <div class="card">
+      <h3>🤖 Generate SEO-Optimized Article (ChatSEO Style)</h3>
+      <p style="color:var(--text-secondary);font-size:0.85rem;margin-bottom:1.5rem;">
+        Enter your topic and target keyword. The AI will generate a 5000-6000 word, deeply researched, 
+        long-form article with TL;DR, data tables, FAQ section, source citations, and proper SEO structure — 
+        just like ChatSEO.
+      </p>
+      <div class="gen-grid">
+        <div>
+          <label>Topic / Title</label>
+          <input type="text" id="gen-topic" placeholder="e.g. Moonshot AI Kimi K3 revenue share deal with Microsoft"/>
+        </div>
+        <div>
+          <label>Target Keyword</label>
+          <input type="text" id="gen-keyword" placeholder="e.g. moonshot ai kimi k3"/>
+        </div>
+      </div>
+      <div class="gen-grid">
+        <div>
+          <label>Category</label>
+          <select id="gen-category">
+            <option>AI Models</option>
+            <option>AI Business</option>
+            <option>AI Regulation</option>
+            <option>Global AI</option>
+            <option>Ai Tool and Tutorials</option>
+            <option>Tech News</option>
+          </select>
+        </div>
+        <div>
+          <label>Language</label>
+          <select id="gen-lang">
+            <option value="english">English</option>
+            <option value="hinglish">Hinglish (Hindi + English mix)</option>
+          </select>
+        </div>
+      </div>
+      <div style="margin-bottom:1rem;">
+        <label>Additional Instructions (Optional)</label>
+        <textarea id="gen-instructions" style="min-height:80px;" placeholder="e.g. Include comparison with DeepSeek V3, mention pricing details, focus on developer impact..."></textarea>
+      </div>
+      <div style="display:flex;gap:1rem;align-items:center;">
+        <button class="btn btn-primary" id="gen-btn" onclick="generateArticle()">🚀 Generate Article (5000+ words)</button>
+        <span class="generating-text" id="gen-status" style="display:none;"><span class="loading"></span> Generating deep content... this takes 30-60 seconds</span>
+      </div>
+    </div>
+
+    <div class="card" id="gen-output-card" style="display:none;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
+        <h3>📄 Generated Article</h3>
+        <div style="display:flex;gap:0.5rem;">
+          <button class="btn btn-secondary" onclick="copyGenerated()">📋 Copy Markdown</button>
+          <button class="btn btn-success" onclick="sendToEditor()">→ Send to Editor</button>
+        </div>
+      </div>
+      <div class="gen-output" id="gen-output"></div>
+      <div class="status-bar" style="margin-top:1rem;">
+        <span>Words: <strong id="gen-word-count">0</strong></span>
+        <span>Characters: <strong id="gen-char-count">0</strong></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== Tab Navigation =====
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+// ===== Keyword Research =====
+let focusKeyword = '';
+
+async function fetchKeywords() {
+  const query = document.getElementById('keyword-input').value.trim();
+  if (!query) return;
+  
+  const resultsDiv = document.getElementById('keyword-results');
+  resultsDiv.innerHTML = '<p style="color:var(--text-muted);">Searching...</p>';
+  
+  try {
+    // Fetch Google Autocomplete suggestions via CORS proxy
+    const suffixes = ['', ' vs', ' how', ' what', ' why', ' best', ' review', ' 2026', ' tools', ' explained'];
+    const allSuggestions = new Set();
+    
+    await Promise.all(suffixes.map(async (suffix) => {
+      try {
+        const resp = await fetch(`https://suggestqueries.google.com/complete/search?client=firefox&q=${encodeURIComponent(query + suffix)}`);
+        const data = await resp.json();
+        if (data[1]) data[1].forEach(s => allSuggestions.add(s));
+      } catch(e) { /* ignore individual failures */ }
+    }));
+
+    if (allSuggestions.size === 0) {
+      resultsDiv.innerHTML = '<p style="color:var(--text-muted);">No suggestions found. Try a different topic.</p>';
+      return;
+    }
+
+    let html = '<div style="margin-bottom:0.75rem;"><label>Click a keyword to select it as your Focus Keyword:</label></div><div class="keyword-chips">';
+    allSuggestions.forEach(kw => {
+      html += `<span class="keyword-chip" onclick="selectKeyword(this, '${kw.replace(/'/g, "\\'")}')">${kw}</span>`;
+    });
+    html += '</div>';
+    resultsDiv.innerHTML = html;
+  } catch(e) {
+    resultsDiv.innerHTML = '<p style="color:var(--red);">Error fetching suggestions. Try again.</p>';
+  }
+}
+
+function selectKeyword(el, keyword) {
+  document.querySelectorAll('.keyword-chip').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  focusKeyword = keyword;
+  document.getElementById('focus-keyword-card').style.display = 'block';
+  document.getElementById('focus-keyword-display').textContent = keyword;
+  document.getElementById('focus-keyword-writer').value = keyword;
+  document.getElementById('gen-keyword').value = keyword;
+  updateSeoScore();
+}
+
+// ===== SEO Score =====
+function updateSeoScore() {
+  const title = document.getElementById('article-title').value;
+  const desc = document.getElementById('meta-desc').value;
+  const keyword = document.getElementById('focus-keyword-writer').value.toLowerCase();
+  const body = document.getElementById('article-body').value;
+  
+  const words = body.trim() ? body.trim().split(/\s+/).length : 0;
+  const chars = body.length;
+  const headings = (body.match(/^#{2,3}\s/gm) || []).length;
+  const readTime = Math.max(1, Math.ceil(words / 200));
+  
+  document.getElementById('word-count').textContent = words;
+  document.getElementById('char-count').textContent = chars;
+  document.getElementById('heading-count').textContent = headings;
+  document.getElementById('reading-time').textContent = readTime + ' min';
+  
+  const checks = [];
+  let score = 0;
+  const total = 10;
+  
+  // 1. Title length
+  const titleLen = title.length;
+  const titleOk = titleLen >= 50 && titleLen <= 65;
+  checks.push({ ok: titleOk, label: `Title Length (${titleLen} chars)`, hint: '50-65 chars optimal' });
+  if (titleOk) score++;
+  
+  // 2. Meta description
+  const descLen = desc.length;
+  const descOk = descLen >= 140 && descLen <= 165;
+  checks.push({ ok: descOk, label: `Meta Description (${descLen} chars)`, hint: '140-165 chars optimal' });
+  if (descOk) score++;
+  
+  // 3. Keyword in title
+  const kwInTitle = keyword && title.toLowerCase().includes(keyword);
+  checks.push({ ok: kwInTitle, label: 'Focus Keyword in Title', hint: keyword ? (kwInTitle ? 'Found' : 'Not found') : 'Set a keyword' });
+  if (kwInTitle) score++;
+  
+  // 4. Keyword in first paragraph
+  const firstPara = body.split('\n\n')[0] || '';
+  const kwInFirst = keyword && firstPara.toLowerCase().includes(keyword);
+  checks.push({ ok: kwInFirst, label: 'Keyword in First Paragraph', hint: keyword ? (kwInFirst ? 'Found' : 'Not found') : 'Set a keyword' });
+  if (kwInFirst) score++;
+  
+  // 5. Keyword density
+  let density = 0;
+  if (keyword && words > 0) {
+    const kwCount = (body.toLowerCase().match(new RegExp(keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g')) || []).length;
+    density = (kwCount / words) * 100;
+  }
+  const densityOk = density >= 0.8 && density <= 2.5;
+  checks.push({ ok: densityOk, label: `Keyword Density (${density.toFixed(1)}%)`, hint: '0.8-2.5% optimal' });
+  if (densityOk) score++;
+  
+  // 6. Word count
+  const wordsOk = words >= 1500;
+  checks.push({ ok: wordsOk, label: `Word Count (${words})`, hint: '1500+ words for ranking' });
+  if (wordsOk) score++;
+  
+  // 7. Headings
+  const headingsOk = headings >= 3;
+  checks.push({ ok: headingsOk, label: `Heading Structure (${headings} headings)`, hint: '3+ H2/H3 headings' });
+  if (headingsOk) score++;
+  
+  // 8. Internal links
+  const links = (body.match(/\[.*?\]\(.*?\)/g) || []).length;
+  const linksOk = links >= 2;
+  checks.push({ ok: linksOk, label: `Internal Links (${links} found)`, hint: '2+ links recommended' });
+  if (linksOk) score++;
+  
+  // 9. Images
+  const images = (body.match(/!\[.*?\]/g) || []).length;
+  const imagesOk = images >= 1;
+  checks.push({ ok: imagesOk, label: `Images (${images} found)`, hint: '1+ image recommended' });
+  if (imagesOk) score++;
+  
+  // 10. FAQ section
+  const hasFaq = body.toLowerCase().includes('faq') || body.toLowerCase().includes('frequently asked');
+  checks.push({ ok: hasFaq, label: 'FAQ Section', hint: hasFaq ? 'Found' : 'Add FAQ for rich snippets' });
+  if (hasFaq) score++;
+  
+  const pct = Math.round((score / total) * 100);
+  const circumference = 2 * Math.PI * 52;
+  const offset = circumference - (pct / 100) * circumference;
+  
+  const circle = document.getElementById('score-circle');
+  circle.style.strokeDashoffset = offset;
+  circle.style.stroke = pct >= 80 ? 'var(--green)' : pct >= 50 ? 'var(--yellow)' : 'var(--red)';
+  
+  const scoreText = document.getElementById('score-value');
+  scoreText.textContent = pct;
+  scoreText.style.color = pct >= 80 ? 'var(--green)' : pct >= 50 ? 'var(--yellow)' : 'var(--red)';
+  
+  let checksHtml = '';
+  checks.forEach(c => {
+    checksHtml += `<div class="seo-check">
+      <span class="icon">${c.ok ? '✅' : '❌'}</span>
+      <span class="label">${c.label}</span>
+      <span class="value" style="color:${c.ok ? 'var(--green)' : 'var(--text-muted)'}">${c.hint}</span>
+    </div>`;
+  });
+  document.getElementById('seo-checks').innerHTML = checksHtml;
+}
+
+function copyMarkdown() {
+  const title = document.getElementById('article-title').value;
+  const desc = document.getElementById('meta-desc').value;
+  const body = document.getElementById('article-body').value;
+  const md = `---\ntitle: "${title}"\ndescription: "${desc}"\n---\n\n${body}`;
+  navigator.clipboard.writeText(md);
+  alert('Copied! Now paste in Decap CMS editor.');
+}
+
+// ===== AI Article Generator =====
+function saveApiKey() {
+  const key = document.getElementById('api-key').value.trim();
+  if (key) {
+    localStorage.setItem('gemini_api_key', key);
+    document.getElementById('api-saved').style.display = 'inline';
+    setTimeout(() => document.getElementById('api-saved').style.display = 'none', 3000);
+  }
+}
+
+// Load saved key
+window.addEventListener('load', () => {
+  const savedKey = localStorage.getItem('gemini_api_key');
+  if (savedKey) document.getElementById('api-key').value = savedKey;
+  updateSeoScore();
+});
+
+let generatedMarkdown = '';
+
+async function generateArticle() {
+  const apiKey = document.getElementById('api-key').value.trim() || localStorage.getItem('gemini_api_key');
+  if (!apiKey) { alert('Please enter your Gemini API key first.'); return; }
+  
+  const topic = document.getElementById('gen-topic').value.trim();
+  const keyword = document.getElementById('gen-keyword').value.trim();
+  const category = document.getElementById('gen-category').value;
+  const lang = document.getElementById('gen-lang').value;
+  const extra = document.getElementById('gen-instructions').value.trim();
+  
+  if (!topic) { alert('Please enter a topic.'); return; }
+  
+  const btn = document.getElementById('gen-btn');
+  const status = document.getElementById('gen-status');
+  btn.disabled = true;
+  status.style.display = 'flex';
+  
+  const langInstruction = lang === 'hinglish' 
+    ? 'Write in Hinglish (mix of Hindi and English, using English script). Use conversational Hindi tone but keep technical terms in English.'
+    : 'Write in clear, professional English.';
+
+  const systemPrompt = `You are an expert AI tech journalist writing for "AI Tech Safar" — a leading AI news publication. You write in the exact style of ChatSEO: deeply researched, long-form, authoritative articles that rank on Google.
+
+YOUR WRITING STYLE (CRITICAL — follow exactly):
+- Write 5000-6000 words minimum. NEVER write less than 4500 words.
+- Every claim must feel backed by data, numbers, or named sources.
+- Use a confident, direct editorial voice — not generic AI fluff.
+- Include specific numbers, percentages, dollar figures, dates, and named entities.
+- Add a "Reporting note" near the top explaining your editorial process.
+- Include an editor's personal take (from "Imran Khan Pathan, Editor").
+
+ARTICLE STRUCTURE (follow this exact structure):
+
+1. **TL;DR** — 3-4 bullet points summarizing the key facts at the very top
+2. **Reporting note** — 1-2 sentences about sourcing methodology
+3. **Editor's personal take** — A brief, authentic comment from the editor
+4. **Main Content** — 8-12 deep H2 sections, each with:
+   - Specific data points and numbers
+   - Named sources (Reuters, Bloomberg, company blogs, etc.)
+   - Analysis and implications
+   - Comparison tables where relevant
+5. **What We Don't Know Yet** — An honest section about unresolved questions
+6. **FAQ Section** — 5-6 detailed Q&As (important for Google FAQ rich snippets)
+7. **Related Reading on AI Tech Safar** — 3-5 internal links in format: [Title](https://www.aitechsafar.com/...)
+8. **Useful Sources** — 4-6 external source links with descriptions
+
+SEO REQUIREMENTS:
+- Use the target keyword "${keyword}" naturally 15-25 times throughout the article
+- Include the keyword in the first paragraph
+- Use variations and LSI keywords throughout
+- Use proper H2 (##) and H3 (###) markdown headings
+- Include comparison tables using markdown table syntax
+- Add blockquotes for key statements
+- ${langInstruction}
+
+CATEGORY: ${category}
+${extra ? 'ADDITIONAL INSTRUCTIONS: ' + extra : ''}
+
+Output ONLY the article body in clean Markdown format. Do NOT include frontmatter (---). Start directly with the TL;DR section.`;
+
+  try {
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ parts: [{ text: `Write a comprehensive, deeply researched, 5000-6000 word article about: "${topic}"\n\nTarget keyword: "${keyword}"` }] }],
+        systemInstruction: { parts: [{ text: systemPrompt }] },
+        generationConfig: {
+          temperature: 0.7,
+          maxOutputTokens: 65536,
+          topP: 0.95
+        }
+      })
+    });
+    
+    const data = await response.json();
+    
+    if (data.candidates && data.candidates[0] && data.candidates[0].content) {
+      generatedMarkdown = data.candidates[0].content.parts[0].text;
+      
+      const outputDiv = document.getElementById('gen-output');
+      // Render markdown as formatted HTML (basic)
+      let html = generatedMarkdown
+        .replace(/^### (.*$)/gm, '<h3>$1</h3>')
+        .replace(/^## (.*$)/gm, '<h2>$1</h2>')
+        .replace(/^# (.*$)/gm, '<h1>$1</h1>')
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\*(.*?)\*/g, '<em>$1</em>')
+        .replace(/^> (.*$)/gm, '<blockquote>$1</blockquote>')
+        .replace(/^- (.*$)/gm, '<li>$1</li>')
+        .replace(/\[([^\]]+)\]\(([^\)]+)\)/g, '<a href="$2" style="color:var(--accent)">$1</a>')
+        .replace(/\n\n/g, '<br/><br/>');
+      
+      outputDiv.innerHTML = html;
+      document.getElementById('gen-output-card').style.display = 'block';
+      
+      const genWords = generatedMarkdown.trim().split(/\s+/).length;
+      document.getElementById('gen-word-count').textContent = genWords;
+      document.getElementById('gen-char-count').textContent = generatedMarkdown.length;
+    } else {
+      const errorMsg = data.error ? data.error.message : 'Unknown error from Gemini API';
+      alert('Error: ' + errorMsg);
+    }
+  } catch(e) {
+    alert('Network error: ' + e.message);
+  } finally {
+    btn.disabled = false;
+    status.style.display = 'none';
+  }
+}
+
+function copyGenerated() {
+  if (generatedMarkdown) {
+    navigator.clipboard.writeText(generatedMarkdown);
+    alert('Markdown copied! Paste in Decap CMS or the Writer tab.');
+  }
+}
+
+function sendToEditor() {
+  if (generatedMarkdown) {
+    document.getElementById('article-body').value = generatedMarkdown;
+    // Switch to writer tab
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+    document.querySelectorAll('.tab-btn')[1].classList.add('active');
+    document.getElementById('tab-writer').classList.add('active');
+    updateSeoScore();
+  }
+}
+</script>
+</body>
+</html>

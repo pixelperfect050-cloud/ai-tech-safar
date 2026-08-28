@@ -3,7 +3,11 @@
   "rewrites": [
     {
       "source": "/admin/seo-writer",
-      "destination": "/admin/seo-writer.html"
+      "destination": "/tools/seo-writer.html"
+    },
+    {
+      "source": "/admin/seo-writer.html",
+      "destination": "/tools/seo-writer.html"
     }
   ],
   "headers": [
