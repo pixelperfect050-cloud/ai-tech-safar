@@ -1,0 +1,172 @@
+---
+import Layout from '../../layouts/Layout.astro';
+
+export async function getStaticPaths() {
+  return [
+    {
+      params: { slug: 'about-us' },
+      props: {
+        title: 'About Us',
+        description: 'Know more about AI Tech Safar - your ultimate destination for the latest AI tools, news, and digital trends.',
+        content: `
+          <h2>Welcome to AI Tech Safar!</h2>
+          <p>At <strong>AI Tech Safar</strong> (https://www.aitechsafar.com/), we are passionate about the future of Artificial Intelligence and technology. Our mission is to guide technology enthusiasts, professionals, developers, and everyday users through the rapidly evolving world of AI.</p>
+          
+          <h3>What We Do</h3>
+          <p>We write and curate high-quality articles, industry news, tutorials, and comparison guides covering:</p>
+          <ul>
+            <li><strong>AI Models:</strong> Detailed reviews and comparisons of LLMs (Claude, ChatGPT, Gemini, Llama, and stealth models).</li>
+            <li><strong>AI Business:</strong> How AI is transforming industries, revenue models, startups, and the job market.</li>
+            <li><strong>AI Regulation:</strong> Global guidelines, ethics, government policies, and safety standards surrounding artificial intelligence.</li>
+            <li><strong>AI Tools & Tutorials:</strong> Practical guides on how to use AI tools to automate workflows and increase productivity.</li>
+          </ul>
+
+          <h3>Our Vision</h3>
+          <p>We believe that AI will reshape how we work, learn, and connect. Through AI Tech Safar (meaning "AI Tech Journey"), we want to make AI accessible, understandable, and useful for everyone. We cut through the hype to bring you actual data, real-world impacts, and curated daily insights.</p>
+
+          <p>Thank you for being part of our journey. If you have any queries, suggestions, or feedback, feel free to <a href="/p/contact-us.html">contact us</a>.</p>
+        `
+      }
+    },
+    {
+      params: { slug: 'contact-us' },
+      props: {
+        title: 'Contact Us',
+        description: 'Get in touch with AI Tech Safar. We welcome queries, suggestions, feedback, and collaboration opportunities.',
+        content: `
+          <h2>Get in Touch with AI Tech Safar</h2>
+          <p>Have a question about our content, want to suggest an AI tool, or discuss collaboration/advertising opportunities? We would love to hear from you!</p>
+          
+          <p>You can reach us directly via email:</p>
+          <div style="background-color: var(--bg-tertiary); padding: 1.5rem; border-radius: 8px; border: 1px solid var(--border-color); margin: 2rem 0; text-align: center;">
+            <p style="margin: 0; font-size: 1.25rem; font-weight: 700; color: var(--accent-emerald);">
+              Email: contact@aitechsafar.com
+            </p>
+            <p style="margin: 0.5rem 0 0 0; font-size: 0.85rem; color: var(--text-muted);">
+              We usually respond within 24 to 48 hours.
+            </p>
+          </div>
+
+          <h3>Connect with Us on Social Media</h3>
+          <p>Stay updated and interact with us on our official social platforms:</p>
+          <ul>
+            <li><strong>X (Twitter):</strong> <a href="https://x.com/AiTechSafar" target="_blank" rel="noopener noreferrer">@AiTechSafar</a></li>
+            <li><strong>Instagram:</strong> <a href="https://www.instagram.com/aitechsafar" target="_blank" rel="noopener noreferrer">@aitechsafar</a></li>
+            <li><strong>LinkedIn:</strong> <a href="https://www.linkedin.com/in/ai-tech-safar-8bb054427" target="_blank" rel="noopener noreferrer">AI Tech Safar on LinkedIn</a></li>
+          </ul>
+        `
+      }
+    },
+    {
+      params: { slug: 'privacy-policy' },
+      props: {
+        title: 'Privacy Policy',
+        description: 'Privacy Policy for AI Tech Safar. Learn how we collect, use, and protect your information.',
+        content: `
+          <h2>Privacy Policy for AI Tech Safar</h2>
+          <p>At AI Tech Safar, accessible from https://www.aitechsafar.com/, one of our main priorities is the privacy of our visitors. This Privacy Policy document contains types of information that is collected and recorded by AI Tech Safar and how we use it.</p>
+          
+          <h3>Log Files</h3>
+          <p>AI Tech Safar follows a standard procedure of using log files. These files log visitors when they visit websites. All hosting companies do this and a part of hosting services' analytics. The information collected by log files include internet protocol (IP) addresses, browser type, Internet Service Provider (ISP), date and time stamp, referring/exit pages, and possibly the number of clicks. These are not linked to any information that is personally identifiable. The purpose of the information is for analyzing trends, administering the site, tracking users' movement on the website, and gathering demographic information.</p>
+
+          <h3>Cookies and Web Beacons</h3>
+          <p>Like any other website, AI Tech Safar uses "cookies". These cookies are used to store information including visitors' preferences, and the pages on the website that the visitor accessed or visited. The information is used to optimize the users' experience by customizing our web page content based on visitors' browser type and/or other information.</p>
+
+          <h3>Google DoubleClick DART Cookie</h3>
+          <p>Google is one of a third-party vendor on our site. It also uses cookies, known as DART cookies, to serve ads to our site visitors based upon their visit to www.website.com and other sites on the internet. However, visitors may choose to decline the use of DART cookies by visiting the Google ad and content network Privacy Policy at the following URL – <a href="https://policies.google.com/technologies/ads" target="_blank">https://policies.google.com/technologies/ads</a></p>
+
+          <h3>Advertising Partners Privacy Policies</h3>
+          <p>You may consult this list to find the Privacy Policy for each of the advertising partners of AI Tech Safar.</p>
+          <p>Third-party ad servers or ad networks uses technologies like cookies, JavaScript, or Web Beacons that are used in their respective advertisements and links that appear on AI Tech Safar, which are sent directly to users' browser. They automatically receive your IP address when this occurs. These technologies are used to measure the effectiveness of their advertising campaigns and/or to personalize the advertising content that you see on websites that you visit.</p>
+          <p>Note that AI Tech Safar has no access to or control over these cookies that are used by third-party advertisers.</p>
+
+          <h3>Third Party Privacy Policies</h3>
+          <p>AI Tech Safar's Privacy Policy does not apply to other advertisers or websites. Thus, we are advising you to consult the respective Privacy Policies of these third-party ad servers for more detailed information. It may include their practices and instructions about how to opt-out of certain options.</p>
+
+          <h3>Consent</h3>
+          <p>By using our website, you hereby consent to our Privacy Policy and agree to its terms.</p>
+        `
+      }
+    },
+    {
+      params: { slug: 'disclaimer' },
+      props: {
+        title: 'Disclaimer',
+        description: 'Disclaimer policy for AI Tech Safar. Information accuracy and liability limits.',
+        content: `
+          <h2>Disclaimer for AI Tech Safar</h2>
+          <p>If you require any more information or have any questions about our site's disclaimer, please feel free to contact us by email at contact@aitechsafar.com.</p>
+          
+          <h3>Consent</h3>
+          <p>By using our website, you hereby consent to our disclaimer and agree to its terms.</p>
+          
+          <h3>Disclaimers for AI Tech Safar</h3>
+          <p>All the information on this website - https://www.aitechsafar.com/ - is published in good faith and for general information purpose only. AI Tech Safar does not make any warranties about the completeness, reliability and accuracy of this information. Any action you take upon the information you find on this website (AI Tech Safar), is strictly at your own risk. AI Tech Safar will not be liable for any losses and/or damages in connection with the use of our website.</p>
+          
+          <p>From our website, you can visit other websites by following hyperlinks to such external sites. While we strive to provide only quality links to useful and ethical websites, we have no control over the content and nature of these sites. These links to other websites do not imply a recommendation for all the content found on these sites. Site owners and content may change without notice and may occur before we have the opportunity to remove a link which may have gone 'bad'.</p>
+          
+          <p>Please be also aware that when you leave our website, other sites may have different privacy policies and terms which are beyond our control. Please be sure to check the Privacy Policies of these sites as well as their "Terms of Service" before engaging in any business or uploading any information.</p>
+
+          <h3>Update</h3>
+          <p>Should we update, amend or make any changes to this document, those changes will be prominently posted here.</p>
+        `
+      }
+    },
+    {
+      params: { slug: 'terms-and-conditions' },
+      props: {
+        title: 'Terms & Conditions',
+        description: 'Terms and Conditions of use for AI Tech Safar. Legal rules and obligations for readers.',
+        content: `
+          <h2>Terms and Conditions</h2>
+          <p>Welcome to AI Tech Safar!</p>
+          
+          <p>These terms and conditions outline the rules and regulations for the use of AI Tech Safar's Website, located at https://www.aitechsafar.com/.</p>
+          
+          <p>By accessing this website we assume you accept these terms and conditions. Do not continue to use AI Tech Safar if you do not agree to take all of the terms and conditions stated on this page.</p>
+
+          <h3>Cookies</h3>
+          <p>We employ the use of cookies. By accessing AI Tech Safar, you agreed to use cookies in agreement with the AI Tech Safar's Privacy Policy.</p>
+
+          <h3>License</h3>
+          <p>Unless otherwise stated, AI Tech Safar and/or its licensors own the intellectual property rights for all material on AI Tech Safar. All intellectual property rights are reserved. You may access this from AI Tech Safar for your own personal use subjected to restrictions set in these terms and conditions.</p>
+
+          <p>You must not:</p>
+          <ul>
+            <li>Republish material from AI Tech Safar</li>
+            <li>Sell, rent or sub-license material from AI Tech Safar</li>
+            <li>Reproduce, duplicate or copy material from AI Tech Safar</li>
+            <li>Redistribute content from AI Tech Safar</li>
+          </ul>
+
+          <h3>Hyperlinking to our Content</h3>
+          <p>The following organizations may link to our Website without prior written approval:</p>
+          <ul>
+            <li>Government agencies;</li>
+            <li>Search engines;</li>
+            <li>News organizations;</li>
+            <li>Online directory distributors may link to our Website in the same manner as they hyperlink to the Websites of other listed businesses; and</li>
+            <li>System wide Accredited Businesses except soliciting non-profit organizations, charity shopping malls, and charity fundraising groups which may not hyperlink to our Web site.</li>
+          </ul>
+
+          <h3>Content Liability</h3>
+          <p>We shall not be hold responsible for any content that appears on your Website. You agree to protect and defend us against all claims that is rising on your Website. No link(s) should appear on any Website that may be interpreted as libelous, obscene or criminal, or which infringes, otherwise violates, or advocates the infringement or other violation of, any third party rights.</p>
+        `
+      }
+    }
+  ];
+}
+
+const { title, description, content } = Astro.props;
+---
+
+<Layout title={title} description={description}>
+  <article class="article-container">
+    <header class="article-header" style="text-align: center; border-bottom: 2px solid var(--border-color);">
+      <h1 class="article-title-large" style="font-size: 3rem; margin-bottom: 0.5rem;">{title}</h1>
+      <p style="color: var(--text-muted); font-size: 0.95rem;">AI Tech Safar Info Center</p>
+    </header>
+
+    <div class="article-body" set:html={content} />
+  </article>
+</Layout>

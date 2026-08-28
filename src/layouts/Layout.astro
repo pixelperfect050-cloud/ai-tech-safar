@@ -1,0 +1,247 @@
+---
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+  image?: string;
+  type?: 'website' | 'article';
+  pubDate?: Date;
+  updatedDate?: Date;
+  category?: string;
+  schema?: Record<string, any>;
+}
+
+const {
+  title,
+  description = "Stay ahead with the latest AI news, tools, and industry trends. Curated daily for professionals and enthusiasts.",
+  image = "/og-default.jpg", // default fallback image
+  type = "website",
+  pubDate,
+  updatedDate,
+  category,
+  schema
+} = Astro.props;
+
+const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+
+// Helper for SEO page titles
+const siteName = "AI Tech Safar";
+const fullTitle = title.includes(siteName) ? title : `${title} — ${siteName}`;
+
+// Google AdSense Publisher ID (Replace this value when approved)
+const ADSENSE_PUBLISHER_ID = "ca-pub-2049704089530737"; // e.g. "ca-pub-XXXXXXXXXXXXXXXX"
+---
+
+<!DOCTYPE html>
+<html lang="hi-IN" data-theme="dark">
+<head>
+  <!-- Global Metadata -->
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <meta name="generator" content={Astro.generator} />
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href={canonicalURL} />
+
+  <!-- Primary Meta Tags -->
+  <title>{fullTitle}</title>
+  <meta name="title" content={fullTitle} />
+  <meta name="description" content={description} />
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content={type} />
+  <meta property="og:url" content={Astro.url} />
+  <meta property="og:title" content={fullTitle} />
+  <meta property="og:description" content={description} />
+  <meta property="og:image" content={new URL(image, Astro.url)} />
+  {pubDate && <meta property="article:published_time" content={pubDate.toISOString()} />}
+  {updatedDate && <meta property="article:modified_time" content={updatedDate.toISOString()} />}
+  {category && <meta property="article:section" content={category} />}
+
+  <!-- Twitter -->
+  <meta property="twitter:card" content="summary_large_image" />
+  <meta property="twitter:url" content={Astro.url} />
+  <meta property="twitter:title" content={fullTitle} />
+  <meta property="twitter:description" content={description} />
+  <meta property="twitter:image" content={new URL(image, Astro.url)} />
+
+  <!-- Theme Toggle Script (Injected in head to prevent FOUC) -->
+  <script is:inline>
+    const theme = (() => {
+      if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
+        return localStorage.getItem('theme');
+      }
+      if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        return 'dark';
+      }
+      return 'light';
+    })();
+    document.documentElement.setAttribute('data-theme', theme);
+  </script>
+
+  <!-- Google Fonts Preconnect -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <!-- AdSense Integration (Only loaded if Publisher ID is provided) -->
+  {ADSENSE_PUBLISHER_ID && (
+    <script 
+      async 
+      src={`https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=${ADSENSE_PUBLISHER_ID}`}
+      crossorigin="anonymous"
+    ></script>
+  )}
+
+  <!-- JSON-LD Structured Schema -->
+  {schema && (
+    <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+  )}
+</head>
+<body>
+  <!-- Header / Navigation -->
+  <header class="header-wrapper">
+    <div class="container navbar">
+      <a href="/" class="nav-logo">
+        <span>AI Tech Safar</span>
+      </a>
+      
+      <nav>
+        <ul class="nav-links">
+          <li><a href="/" class={Astro.url.pathname === "/" ? "active" : ""}>Home</a></li>
+          <li><a href="/search/label/AI%20Models" class={Astro.url.pathname.includes("AI%20Models") ? "active" : ""}>AI Models</a></li>
+          <li><a href="/search/label/AI%20Business" class={Astro.url.pathname.includes("AI%20Business") ? "active" : ""}>AI Business</a></li>
+          <li><a href="/search/label/AI%20Regulation" class={Astro.url.pathname.includes("AI%20Regulation") ? "active" : ""}>Regulation</a></li>
+          <li><a href="/search/label/Ai%20Tool%20and%20Tutorials" class={Astro.url.pathname.includes("Ai%20Tool%20and%20Tutorials") ? "active" : ""}>Tools</a></li>
+          <li>
+            <button id="theme-toggle" class="theme-toggle-btn" aria-label="Toggle Theme">
+              <!-- Dark Icon -->
+              <svg id="theme-toggle-dark-icon" class="hidden" width="16" height="16" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path></svg>
+              <!-- Light Icon -->
+              <svg id="theme-toggle-light-icon" class="hidden" width="16" height="16" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.46 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 100 2h1z"></path></svg>
+            </button>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Top Ad Slot (Standard Banner) -->
+  <div class="container">
+    <div class="ad-slot-container" style="max-height: 120px; margin-top: 1.5rem;">
+      <div class="ad-slot-label">Advertisement</div>
+      <div class="ad-slot-display">
+        {ADSENSE_PUBLISHER_ID ? (
+          <>
+            <ins class="adsbygoogle"
+                 style="display:inline-block;width:728px;height:90px"
+                 data-ad-client={ADSENSE_PUBLISHER_ID}
+                 data-ad-slot="header-banner"></ins>
+            <script is:inline set:html="(adsbygoogle = window.adsbygoogle || []).push({});" />
+          </>
+        ) : (
+          <span>Responsive Ad Slot (Header 728x90)</span>
+        )}
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Content Page Slot -->
+  <main class="fade-in">
+    <slot />
+  </main>
+
+  <!-- Footer Section -->
+  <footer class="footer">
+    <div class="container footer-grid">
+      <div class="footer-widget">
+        <a href="/" class="nav-logo"><span>AI Tech Safar</span></a>
+        <p class="footer-widget-desc">Tech, AI, and Latest Digital Updates directly to you. Stay informed daily.</p>
+      </div>
+      
+      <div class="footer-widget">
+        <h4>Important Links</h4>
+        <ul class="footer-menu">
+          <li><a href="/p/about-us.html">About Us</a></li>
+          <li><a href="/p/contact-us.html">Contact Us</a></li>
+          <li><a href="/p/privacy-policy.html">Privacy Policy</a></li>
+          <li><a href="/p/disclaimer.html">Disclaimer</a></li>
+          <li><a href="/p/terms-and-conditions.html">Terms & Conditions</a></li>
+        </ul>
+      </div>
+
+      <div class="footer-widget">
+        <h4>Trending Categories</h4>
+        <ul class="footer-menu">
+          <li><a href="/search/label/AI%20Models">AI Models</a></li>
+          <li><a href="/search/label/AI%20Business">AI Business</a></li>
+          <li><a href="/search/label/AI%20Regulation">AI Regulation</a></li>
+          <li><a href="/search/label/Global%20AI">Global AI</a></li>
+          <li><a href="/search/label/Ai%20Tool%20and%20Tutorials">Ai Tool & Tutorials</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="container footer-bottom">
+      <p>&copy; {new Date().getFullYear()} AiTechSafar. All Rights Reserved.</p>
+      <ul class="social-links">
+        <li>
+          <a href="https://x.com/AiTechSafar" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="Twitter X">
+            X (Twitter)
+          </a>
+        </li>
+        <li>
+          <a href="https://www.instagram.com/aitechsafar" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="Instagram">
+            Instagram
+          </a>
+        </li>
+        <li>
+          <a href="https://www.linkedin.com/in/ai-tech-safar-8bb054427" target="_blank" rel="noopener noreferrer" class="social-link" aria-label="LinkedIn">
+            LinkedIn
+          </a>
+        </li>
+      </ul>
+    </div>
+  </footer>
+
+  <!-- Theme Toggle Controller script -->
+  <script>
+    const themeToggleBtn = document.getElementById('theme-toggle');
+    const darkIcon = document.getElementById('theme-toggle-dark-icon');
+    const lightIcon = document.getElementById('theme-toggle-light-icon');
+
+    // Sync button visual state on startup
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    if (currentTheme === 'dark') {
+      lightIcon?.classList.remove('hidden');
+    } else {
+      darkIcon?.classList.remove('hidden');
+    }
+
+    themeToggleBtn?.addEventListener('click', () => {
+      const activeTheme = document.documentElement.getAttribute('data-theme');
+      let targetTheme = 'light';
+      
+      if (activeTheme === 'light') {
+        targetTheme = 'dark';
+        darkIcon?.classList.add('hidden');
+        lightIcon?.classList.remove('hidden');
+      } else {
+        targetTheme = 'light';
+        lightIcon?.classList.add('hidden');
+        darkIcon?.classList.remove('hidden');
+      }
+      
+      document.documentElement.setAttribute('data-theme', targetTheme);
+      localStorage.setItem('theme', targetTheme);
+    });
+  </script>
+</body>
+</html>
+
+<style>
+  .hidden {
+    display: none !important;
+  }
+</style>

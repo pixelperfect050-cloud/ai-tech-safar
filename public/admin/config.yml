@@ -1,0 +1,29 @@
+backend:
+  name: github
+  repo: pixelperfect050-cloud/Vfend
+  branch: backup-before-auth-theme-otp # Active branch of your repository
+  base_url: https://api.github.com
+  auth_endpoint: https://oauth.decapcms.org/auth # Free OAuth provider gateway
+
+# Media assets configuration
+media_folder: "Ai Tech Safar/public/images/uploads"
+public_folder: "/images/uploads"
+
+collections:
+  - name: "blog"
+    label: "Blog Posts"
+    folder: "Ai Tech Safar/src/content/blog"
+    # Match the dynamic routing format: /year/month/slug
+    path: "{{year}}/{{month}}/{{slug}}"
+    create: true
+    slug: "{{slug}}"
+    fields:
+      - { label: "Title", name: "title", widget: "string" }
+      - { label: "Description", name: "description", widget: "text" }
+      - { label: "Publish Date", name: "pubDate", widget: "date" }
+      - { label: "Category", name: "category", widget: "select", options: ["AI Models", "AI Business", "AI Regulation", "Global AI", "Ai Tool and Tutorials"] }
+      - { label: "Tags", name: "tags", widget: "list" }
+      - { label: "Hero Image", name: "heroImage", widget: "string", default: "", required: false }
+      - { label: "Featured Post", name: "featured", widget: "boolean", default: false }
+      - { label: "Author", name: "author", widget: "string", default: "AI Tech Safar" }
+      - { label: "Body", name: "body", widget: "markdown" }

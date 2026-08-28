@@ -1,0 +1,154 @@
+---
+import { getCollection, render } from 'astro:content';
+import Layout from '../../../layouts/Layout.astro';
+import FormattedDate from '../../../components/FormattedDate.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map((post) => {
+    // Expecting ID format like: "2026/08/moonshot-ai-30-revenue-share-kimi-k3"
+    const parts = post.id.split('/');
+    if (parts.length >= 3) {
+      const [year, month, slug] = parts;
+      return {
+        params: { year, month, slug },
+        props: { post },
+      };
+    } else {
+      // Fallback parsing from publication date if folder structure isn't nested
+      const year = post.data.pubDate.getFullYear().toString();
+      const month = String(post.data.pubDate.getMonth() + 1).padStart(2, '0');
+      // Strip extension if present
+      const slug = post.id.replace(/\.[^/.]+$/, "");
+      return {
+        params: { year, month, slug },
+        props: { post },
+      };
+    }
+  });
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+
+// Google AdSense Publisher ID (Synchronized with layout)
+const ADSENSE_PUBLISHER_ID = ""; // e.g. "ca-pub-XXXXXXXXXXXXXXXX"
+
+// Structured Data for Google Rich Snippets (SEO)
+const articleURL = new URL(Astro.url.pathname, Astro.site).toString();
+const schema = {
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": post.data.title,
+  "description": post.data.description,
+  "image": post.data.heroImage ? (post.data.heroImage.startsWith('http') ? post.data.heroImage : new URL(post.data.heroImage, Astro.site).toString()) : undefined,
+  "datePublished": post.data.pubDate.toISOString(),
+  "dateModified": post.data.updatedDate ? post.data.updatedDate.toISOString() : post.data.pubDate.toISOString(),
+  "author": {
+    "@type": "Person",
+    "name": post.data.author
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "AI Tech Safar",
+    "logo": {
+      "@type": "ImageObject",
+      "url": new URL("/favicon.svg", Astro.site).toString()
+    }
+  },
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": articleURL
+  }
+};
+---
+
+<Layout 
+  title={post.data.title} 
+  description={post.data.description}
+  image={post.data.heroImage}
+  type="article"
+  pubDate={post.data.pubDate}
+  updatedDate={post.data.updatedDate}
+  category={post.data.category}
+  schema={schema}
+>
+  <article class="article-container">
+    <!-- Header -->
+    <header class="article-header">
+      <div style="margin-bottom: 0.5rem;">
+        <a href={`/search/label/${encodeURIComponent(post.data.category)}`} class="badge">
+          {post.data.category}
+        </a>
+      </div>
+      <h1 class="article-title-large">{post.data.title}</h1>
+      <div class="article-meta-large">
+        <div class="article-author-info">
+          <span>By {post.data.author}</span>
+        </div>
+        <span>•</span>
+        <FormattedDate date={post.data.pubDate} />
+        {post.data.updatedDate && (
+          <>
+            <span>•</span>
+            <span style="font-style: italic;">
+              Updated: <FormattedDate date={post.data.updatedDate} />
+            </span>
+          </>
+        )}
+      </div>
+    </header>
+
+    <!-- Header Ad Slot -->
+    <div class="ad-slot-container" style="max-height: 100px; margin-bottom: 2rem;">
+      <div class="ad-slot-label">Advertisement</div>
+      <div class="ad-slot-display">
+        {ADSENSE_PUBLISHER_ID ? (
+          <>
+            <ins class="adsbygoogle"
+                 style="display:inline-block;width:728px;height:90px"
+                 data-ad-client={ADSENSE_PUBLISHER_ID}
+                 data-ad-slot="article-top"></ins>
+            <script is:inline set:html="(adsbygoogle = window.adsbygoogle || []).push({});" />
+          </>
+        ) : (
+          <span>Responsive Ad Slot (Above Article)</span>
+        )}
+      </div>
+    </div>
+
+    <!-- Main Image -->
+    {post.data.heroImage && (
+      <div style="margin-bottom: 2.5rem; border-radius: 12px; overflow: hidden; box-shadow: var(--shadow-md);">
+        <img 
+          src={post.data.heroImage} 
+          alt={post.data.title} 
+          style="width: 100%; height: auto; display: block;"
+        />
+      </div>
+    )}
+
+    <!-- Article Content -->
+    <div class="article-body">
+      <Content />
+    </div>
+
+    <!-- Footer Ad Slot -->
+    <div class="ad-slot-container" style="min-height: 150px; margin-top: 3rem;">
+      <div class="ad-slot-label">Advertisement</div>
+      <div class="ad-slot-display">
+        {ADSENSE_PUBLISHER_ID ? (
+          <>
+            <ins class="adsbygoogle"
+                 style="display:inline-block;width:336px;height:280px"
+                 data-ad-client={ADSENSE_PUBLISHER_ID}
+                 data-ad-slot="article-bottom"></ins>
+            <script is:inline set:html="(adsbygoogle = window.adsbygoogle || []).push({});" />
+          </>
+        ) : (
+          <span>Responsive Ad Slot (Below Article 336x280)</span>
+        )}
+      </div>
+    </div>
+  </article>
+</Layout>

@@ -1,0 +1,118 @@
+---
+import { getCollection } from 'astro:content';
+import Layout from '../../../layouts/Layout.astro';
+import FormattedDate from '../../../components/FormattedDate.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  
+  // Extract all unique categories
+  const categories = [...new Set(posts.map(post => post.data.category))];
+  
+  // Add some fallback standard blogger labels just in case
+  const defaultLabels = ["AI Models", "AI Business", "AI Regulation", "Global AI", "Ai Tool and Tutorials", "AI Agents", "Anthropic", "Claude AI", "Explainer", "Hugging Face", "Nvidia", "OpenAI", "Tech News", "Tech News 2026"];
+  const allLabels = [...new Set([...categories, ...defaultLabels])];
+
+  return allLabels.map(label => {
+    return {
+      params: { label },
+      props: { labelName: label }
+    };
+  });
+}
+
+const { labelName } = Astro.props;
+
+// Fetch and filter posts that match the label (case insensitive check)
+const posts = (await getCollection('blog'))
+  .filter(post => 
+    post.data.category.toLowerCase() === labelName.toLowerCase() || 
+    (post.data.tags && post.data.tags.some(tag => tag.toLowerCase() === labelName.toLowerCase()))
+  )
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+---
+
+<Layout title={`Category: ${labelName}`}>
+  <div class="container">
+    <div class="homepage-grid">
+      <!-- Main Content Feed -->
+      <div>
+        <section class="news-feed-section">
+          <div class="feed-header">
+            <h3 class="feed-title">{labelName} Articles</h3>
+          </div>
+
+          {posts.length === 0 ? (
+            <div style="text-align: center; padding: 4rem 0;">
+              <p style="color: var(--text-muted); margin-bottom: 1.5rem;">No articles found under "{labelName}".</p>
+              <a href="/" class="badge" style="padding: 0.5rem 1rem;">Back to Homepage</a>
+            </div>
+          ) : (
+            posts.map(post => (
+              <article class="article-row-card">
+                <div class="article-row-image-wrapper">
+                  <a href={`/${post.id}.html`}>
+                    <img 
+                      src={post.data.heroImage || "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?q=80&w=600&auto=format&fit=crop"} 
+                      alt={post.data.title} 
+                      class="article-row-image"
+                      loading="lazy"
+                    />
+                  </a>
+                </div>
+                <div class="article-row-content">
+                  <div>
+                    <span class="badge purple">{post.data.category}</span>
+                    <h3 class="article-row-title">
+                      <a href={`/${post.id}.html`}>{post.data.title}</a>
+                    </h3>
+                    <p class="article-row-excerpt">{post.data.description}</p>
+                  </div>
+                  <div class="article-row-meta">
+                    <span>By {post.data.author}</span>
+                    <span>•</span>
+                    <FormattedDate date={post.data.pubDate} />
+                  </div>
+                </div>
+              </article>
+            ))
+          )}
+        </section>
+      </div>
+
+      <!-- Sidebar -->
+      <aside class="sidebar-wrapper">
+        <!-- Info Widget -->
+        <div class="sidebar-widget">
+          <h4 class="widget-title">About this Label</h4>
+          <p style="font-size: 0.9rem; color: var(--text-secondary); line-height: 1.6;">
+            Viewing articles categorized under <strong>{labelName}</strong>. Subscribe to our newsletter to receive the latest updates in this category.
+          </p>
+        </div>
+
+        <!-- Ad Slot -->
+        <div class="ad-slot-container" style="min-height: 250px;">
+          <div class="ad-slot-label">Advertisement</div>
+          <div class="ad-slot-display" style="min-height: 250px;">
+            <span>Sidebar Box Ad (300x250)</span>
+          </div>
+        </div>
+
+        <!-- Newsletter Signup Widget -->
+        <div class="sidebar-widget">
+          <h4 class="widget-title">Newsletter</h4>
+          <form class="newsletter-form" onsubmit="event.preventDefault(); alert('Subscribed successfully!');">
+            <input 
+              type="email" 
+              placeholder="Your email address" 
+              class="newsletter-input" 
+              required 
+              aria-label="Email Address"
+            />
+            <button type="submit" class="newsletter-submit">Subscribe</button>
+          </form>
+        </div>
+      </aside>
+    </div>
+  </div>
+</Layout>
