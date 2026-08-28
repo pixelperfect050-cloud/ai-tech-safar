@@ -2,608 +2,778 @@
 export const prerender = true;
 ---
 <!DOCTYPE html>
-<html lang="en" data-theme="dark">
+<html lang="en" data-theme="light">
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <meta name="robots" content="noindex, nofollow"/>
-  <title>SEO Article Writer â€” AI Tech Safar</title>
+  <title>SEO Analysis - ai-tech-safar.com | ChatSEO</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <!-- Include Marked.js for Markdown parsing -->
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" is:inline></script>
+  <!-- Include DOMPurify to prevent XSS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js" is:inline></script>
+
   <style>
     :root {
-      --bg-primary: #0a0a0f;
-      --bg-secondary: #12121a;
-      --bg-tertiary: #1a1a2e;
-      --text-primary: #e8e8f0;
-      --text-secondary: #a0a0b8;
-      --text-muted: #6a6a80;
-      --accent: #7c5cff;
-      --accent-hover: #9b7eff;
-      --green: #22c55e;
-      --yellow: #eab308;
-      --red: #ef4444;
-      --border: #2a2a3e;
-      --shadow: 0 4px 24px rgba(0,0,0,0.3);
+      --bg-primary: #ffffff;
+      --bg-secondary: #f9fafb;
+      --text-primary: #111827;
+      --text-secondary: #4b5563;
+      --text-muted: #9ca3af;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --border: #e5e7eb;
+      --sidebar-width: 260px;
     }
+
     * { margin:0; padding:0; box-sizing:border-box; }
-    body { font-family:'Inter',sans-serif; background:var(--bg-primary); color:var(--text-primary); line-height:1.6; }
-    
-    .app-header { background:var(--bg-secondary); border-bottom:1px solid var(--border); padding:1rem 2rem; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:100; backdrop-filter:blur(12px); }
-    .app-header h1 { font-size:1.2rem; font-weight:700; }
-    .app-header h1 span { color:var(--accent); }
-    .header-links { display:flex; gap:1rem; }
-    .header-links a { color:var(--text-secondary); text-decoration:none; font-size:0.85rem; padding:0.4rem 0.8rem; border-radius:8px; transition:all 0.2s; }
-    .header-links a:hover { background:var(--bg-tertiary); color:var(--text-primary); }
-
-    .container { max-width:1400px; margin:0 auto; padding:2rem; }
-    
-    /* Tabs */
-    .tabs { display:flex; gap:0.5rem; margin-bottom:2rem; border-bottom:1px solid var(--border); padding-bottom:0; }
-    .tab-btn { padding:0.8rem 1.5rem; background:none; border:none; color:var(--text-muted); font-size:0.95rem; font-weight:600; cursor:pointer; border-bottom:3px solid transparent; transition:all 0.2s; font-family:inherit; }
-    .tab-btn:hover { color:var(--text-secondary); }
-    .tab-btn.active { color:var(--accent); border-bottom-color:var(--accent); }
-    .tab-content { display:none; }
-    .tab-content.active { display:block; }
-
-    /* Cards */
-    .card { background:var(--bg-secondary); border:1px solid var(--border); border-radius:16px; padding:1.5rem; margin-bottom:1.5rem; }
-    .card h3 { font-size:1.1rem; font-weight:700; margin-bottom:1rem; display:flex; align-items:center; gap:0.5rem; }
-    
-    /* Inputs */
-    input[type="text"], input[type="number"], textarea, select {
-      width:100%; padding:0.75rem 1rem; background:var(--bg-tertiary); border:1px solid var(--border); border-radius:10px;
-      color:var(--text-primary); font-family:inherit; font-size:0.95rem; outline:none; transition:border 0.2s;
+    body { 
+      font-family:'Inter',sans-serif; 
+      background:var(--bg-primary); 
+      color:var(--text-primary); 
+      line-height:1.6;
+      height: 100vh;
+      display: flex;
+      overflow: hidden;
     }
-    input:focus, textarea:focus, select:focus { border-color:var(--accent); }
-    textarea { resize:vertical; min-height:150px; }
-    label { display:block; font-size:0.85rem; font-weight:600; color:var(--text-secondary); margin-bottom:0.4rem; }
-
-    /* Buttons */
-    .btn { padding:0.7rem 1.5rem; border:none; border-radius:10px; font-family:inherit; font-weight:600; font-size:0.9rem; cursor:pointer; transition:all 0.2s; display:inline-flex; align-items:center; gap:0.5rem; }
-    .btn-primary { background:var(--accent); color:#fff; }
-    .btn-primary:hover { background:var(--accent-hover); transform:translateY(-1px); }
-    .btn-primary:disabled { opacity:0.5; cursor:not-allowed; transform:none; }
-    .btn-secondary { background:var(--bg-tertiary); color:var(--text-primary); border:1px solid var(--border); }
-    .btn-secondary:hover { border-color:var(--accent); }
-    .btn-success { background:var(--green); color:#fff; }
-
-    /* Keyword Research */
-    .keyword-input-row { display:flex; gap:1rem; margin-bottom:1.5rem; }
-    .keyword-input-row input { flex:1; }
-    .keyword-chips { display:flex; flex-wrap:wrap; gap:0.5rem; }
-    .keyword-chip { padding:0.4rem 0.8rem; background:var(--bg-tertiary); border:1px solid var(--border); border-radius:20px; font-size:0.82rem; color:var(--text-secondary); cursor:pointer; transition:all 0.2s; }
-    .keyword-chip:hover { background:var(--accent); color:#fff; border-color:var(--accent); }
-    .keyword-chip.selected { background:var(--accent); color:#fff; border-color:var(--accent); }
-
-    /* SEO Score */
-    .seo-score-ring { width:120px; height:120px; margin:0 auto 1rem; position:relative; }
-    .seo-score-ring svg { transform:rotate(-90deg); }
-    .seo-score-ring .score-text { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); font-size:2rem; font-weight:800; }
-    .seo-checks { display:grid; gap:0.5rem; }
-    .seo-check { display:flex; align-items:center; gap:0.75rem; padding:0.6rem 0.8rem; border-radius:8px; background:var(--bg-tertiary); font-size:0.85rem; }
-    .seo-check .icon { font-size:1.1rem; flex-shrink:0; }
-    .seo-check .label { flex:1; color:var(--text-secondary); }
-    .seo-check .value { font-weight:600; font-size:0.8rem; }
-
-    /* Article Writer */
-    .writer-layout { display:grid; grid-template-columns:1fr 340px; gap:1.5rem; }
-    @media(max-width:900px) { .writer-layout { grid-template-columns:1fr; } }
-    .writer-editor textarea { min-height:500px; font-size:0.92rem; line-height:1.8; }
     
-    /* AI Generator */
-    .gen-grid { display:grid; grid-template-columns:1fr 1fr; gap:1rem; margin-bottom:1rem; }
-    @media(max-width:700px) { .gen-grid { grid-template-columns:1fr; } }
-    .gen-output { background:var(--bg-tertiary); border:1px solid var(--border); border-radius:12px; padding:1.5rem; min-height:300px; max-height:70vh; overflow-y:auto; white-space:pre-wrap; font-size:0.9rem; line-height:1.8; }
-    .gen-output h1,.gen-output h2,.gen-output h3 { color:var(--accent); margin:1.5rem 0 0.5rem; }
-    .gen-output blockquote { border-left:3px solid var(--accent); padding-left:1rem; margin:1rem 0; color:var(--text-secondary); }
+    /* Layout */
+    .sidebar {
+      width: var(--sidebar-width);
+      background: var(--bg-secondary);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      position: relative;
+    }
 
-    /* Status bar */
-    .status-bar { display:flex; gap:1.5rem; padding:0.8rem 1.2rem; background:var(--bg-tertiary); border-radius:10px; font-size:0.82rem; color:var(--text-muted); margin-top:0.5rem; flex-wrap:wrap; }
-    .status-bar span strong { color:var(--text-secondary); }
+    /* Sidebar Elements */
+    .sidebar-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .logo {
+      font-weight: 700;
+      font-size: 1.25rem;
+      color: var(--text-primary);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      text-decoration: none;
+    }
+    .project-selector {
+      margin-top: 1rem;
+      padding: 0.5rem;
+      background: var(--bg-primary);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 0.875rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--accent);
+      font-weight: 500;
+      cursor: pointer;
+    }
+    .sidebar-nav {
+      padding: 1rem;
+      flex: 1;
+      overflow-y: auto;
+    }
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.5rem 0.75rem;
+      color: var(--text-secondary);
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+      border-radius: 6px;
+      margin-bottom: 0.25rem;
+      cursor: pointer;
+    }
+    .nav-item:hover, .nav-item.active {
+      background: var(--border);
+      color: var(--text-primary);
+    }
+    .sidebar-footer {
+      padding: 1rem;
+      border-top: 1px solid var(--border);
+    }
+    .api-key-input {
+      width: 100%;
+      padding: 0.5rem;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 0.75rem;
+      outline: none;
+      font-family: monospace;
+      margin-bottom: 0.5rem;
+    }
+    .btn-save {
+      width: 100%;
+      padding: 0.5rem;
+      background: var(--text-primary);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      cursor: pointer;
+      font-weight: 600;
+    }
 
-    /* API Key */
-    .api-key-row { display:flex; gap:0.75rem; align-items:end; margin-bottom:1.5rem; }
-    .api-key-row .input-group { flex:1; }
-    .api-key-row input { font-family:monospace; }
-    .saved-badge { color:var(--green); font-size:0.8rem; font-weight:600; }
+    /* Main Chat Area */
+    .chat-header {
+      height: 60px;
+      display: flex;
+      align-items: center;
+      padding: 0 1.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .chat-container {
+      flex: 1;
+      overflow-y: auto;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      scroll-behavior: smooth;
+    }
+    .empty-state {
+      margin: auto;
+      text-align: center;
+      max-width: 600px;
+    }
+    .empty-state h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      margin-bottom: 2rem;
+    }
+    .empty-state h1 span {
+      color: var(--accent);
+    }
+    .prompt-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+    }
+    .prompt-card {
+      border: 1px solid var(--border);
+      padding: 1rem;
+      border-radius: 12px;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .prompt-card:hover {
+      border-color: var(--accent);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+    .prompt-card h4 {
+      font-size: 0.875rem;
+      color: var(--text-primary);
+      margin-bottom: 0.25rem;
+    }
+    .prompt-card p {
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+    }
 
-    /* Loading */
-    .loading { display:inline-block; width:18px; height:18px; border:2px solid var(--border); border-top-color:var(--accent); border-radius:50%; animation:spin 0.6s linear infinite; }
-    @keyframes spin { to { transform:rotate(360deg); } }
-    .generating-text { color:var(--accent); font-size:0.9rem; display:flex; align-items:center; gap:0.5rem; }
+    /* Chat Messages */
+    .message {
+      display: flex;
+      gap: 1rem;
+      max-width: 800px;
+      margin: 0 auto;
+      width: 100%;
+    }
+    .message.user {
+      flex-direction: row-reverse;
+    }
+    .bubble {
+      padding: 1rem 1.25rem;
+      border-radius: 16px;
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+    .user .bubble {
+      background: var(--bg-secondary);
+      border: 1px solid var(--border);
+      color: var(--text-primary);
+      border-bottom-right-radius: 4px;
+    }
+    .assistant .bubble {
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      width: 100%;
+    }
+    .assistant .bubble p { margin-bottom: 1rem; }
+    .assistant .bubble p:last-child { margin-bottom: 0; }
+    .assistant .bubble h2, .assistant .bubble h3 { margin: 1.5rem 0 0.5rem; font-weight: 700; }
+    .assistant .bubble ul, .assistant .bubble ol { margin-left: 1.5rem; margin-bottom: 1rem; }
+    .assistant .bubble table { width: 100%; border-collapse: collapse; margin-bottom: 1rem; }
+    .assistant .bubble th, .assistant .bubble td { border: 1px solid var(--border); padding: 0.5rem; text-align: left; }
+    .assistant .bubble th { background: var(--bg-secondary); }
+
+    /* Tool UI Cards */
+    .doc-card {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.25rem;
+      background: var(--bg-secondary);
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      margin: 1rem 0;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .doc-card:hover {
+      border-color: var(--accent);
+      background: var(--bg-primary);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+    .doc-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      background: #eff6ff;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+    }
+    .doc-info { flex: 1; }
+    .doc-title { font-weight: 600; font-size: 0.95rem; color: var(--text-primary); }
+    .doc-meta { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem; }
+
+    /* Input Area */
+    .input-area {
+      padding: 1.5rem 2rem;
+      background: var(--bg-primary);
+      border-top: 1px solid transparent;
+    }
+    .input-container {
+      max-width: 800px;
+      margin: 0 auto;
+      position: relative;
+    }
+    .chat-input {
+      width: 100%;
+      min-height: 56px;
+      max-height: 200px;
+      padding: 1rem 3.5rem 1rem 1.25rem;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      font-family: inherit;
+      font-size: 0.95rem;
+      resize: none;
+      outline: none;
+      background: var(--bg-primary);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+      transition: border 0.2s, box-shadow 0.2s;
+    }
+    .chat-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
+    }
+    .send-btn {
+      position: absolute;
+      right: 8px;
+      bottom: 8px;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--accent);
+      color: white;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .send-btn:hover { background: var(--accent-hover); }
+    .send-btn:disabled { background: var(--border); cursor: not-allowed; }
+
+    /* Loading dots */
+    .typing-indicator {
+      display: flex;
+      gap: 4px;
+      padding: 1rem;
+    }
+    .dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--text-muted);
+      animation: bounce 1.4s infinite ease-in-out both;
+    }
+    .dot:nth-child(1) { animation-delay: -0.32s; }
+    .dot:nth-child(2) { animation-delay: -0.16s; }
+    @keyframes bounce {
+      0%, 80%, 100% { transform: scale(0); }
+      40% { transform: scale(1); }
+    }
+    
+    /* Markdown Modal */
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5);
+      display: none; justify-content: center; align-items: center;
+      z-index: 1000;
+    }
+    .modal-content {
+      background: var(--bg-primary);
+      width: 90%; max-width: 800px;
+      max-height: 90vh;
+      border-radius: 16px;
+      display: flex; flex-direction: column;
+    }
+    .modal-header {
+      padding: 1rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .modal-header h3 { font-size: 1.1rem; }
+    .modal-body {
+      padding: 1.5rem;
+      overflow-y: auto;
+      flex: 1;
+    }
+    .modal-footer {
+      padding: 1rem 1.5rem;
+      border-top: 1px solid var(--border);
+      display: flex; justify-content: flex-end; gap: 1rem;
+    }
+    .btn-outline {
+      padding: 0.5rem 1rem;
+      border: 1px solid var(--border);
+      background: var(--bg-primary);
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 500;
+    }
+    .btn-outline:hover { background: var(--bg-secondary); }
+    
   </style>
 </head>
 <body>
 
-<header class="app-header">
-  <h1>âœï¸ <span>SEO</span> Article Writer</h1>
-  <div class="header-links">
-    <a href="/admin/">â† CMS Dashboard</a>
-    <a href="/">ðŸ  Site</a>
-  </div>
-</header>
-
-<div class="container">
-  <!-- Tabs -->
-  <div class="tabs">
-    <button class="tab-btn active" data-tab="keywords">ðŸ” Keyword Research</button>
-    <button class="tab-btn" data-tab="writer">âœï¸ Write + SEO Score</button>
-    <button class="tab-btn" data-tab="generator">ðŸ¤– AI Article Generator</button>
-  </div>
-
-  <!-- Tab 1: Keyword Research -->
-  <div class="tab-content active" id="tab-keywords">
-    <div class="card">
-      <h3>ðŸ” Keyword Research</h3>
-      <p style="color:var(--text-secondary);font-size:0.85rem;margin-bottom:1rem;">Enter a topic to discover related keywords from Google Autocomplete. Click any keyword to set it as your Focus Keyword.</p>
-      <div class="keyword-input-row">
-        <input type="text" id="keyword-input" placeholder="e.g. agentic ai, claude vs chatgpt, openai o3..." />
-        <button class="btn btn-primary" onclick="fetchKeywords()">Search Keywords</button>
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <a href="/admin/" class="logo">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sparkles" style="color:var(--accent);"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
+        ChatSEO
+      </a>
+      <div class="project-selector">
+        <img src="https://www.google.com/s2/favicons?domain=aitechsafar.com&sz=32" alt="icon" style="width:16px;height:16px;border-radius:4px;" />
+        aitechsafar.com
       </div>
-      <div id="keyword-results"></div>
     </div>
-    <div class="card" id="focus-keyword-card" style="display:none;">
-      <h3>ðŸŽ¯ Focus Keyword Selected</h3>
-      <p style="font-size:1.1rem;font-weight:700;color:var(--accent);" id="focus-keyword-display"></p>
-      <p style="color:var(--text-secondary);font-size:0.85rem;margin-top:0.5rem;">This keyword will be used for SEO scoring in the Writer tab and as the primary keyword for AI generation.</p>
+    <div class="sidebar-nav">
+      <a href="#" class="nav-item active" onclick="location.reload()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+        New chat
+      </a>
     </div>
-  </div>
+    <div class="sidebar-footer">
+      <label style="font-size:0.75rem; color:var(--text-secondary); margin-bottom:0.25rem; display:block;">Gemini API Key</label>
+      <input type="password" id="api-key" class="api-key-input" placeholder="AIzaSy..." />
+      <button class="btn-save" onclick="saveApiKey()" id="save-key-btn">Save Key</button>
+    </div>
+  </aside>
 
-  <!-- Tab 2: Writer + SEO Score -->
-  <div class="tab-content" id="tab-writer">
-    <div class="writer-layout">
-      <div>
-        <div class="card">
-          <h3>âœï¸ Article Editor</h3>
-          <div style="margin-bottom:1rem;">
-            <label>Article Title</label>
-            <input type="text" id="article-title" placeholder="Enter your SEO-optimized title..." oninput="updateSeoScore()"/>
+  <!-- Main Chat Area -->
+  <main class="main-content">
+    <div class="chat-header"></div>
+
+    <div class="chat-container" id="chat-container">
+      
+      <!-- Empty State -->
+      <div class="empty-state" id="empty-state">
+        <h1>How can I help you with <span>aitechsafar.com</span>?</h1>
+        <div class="prompt-grid">
+          <div class="prompt-card" onclick="setPrompt('Build my SEO strategy', 'Let\'s start here :)')">
+            <h4>Build my SEO strategy</h4>
+            <p>Let's start here :)</p>
           </div>
-          <div style="margin-bottom:1rem;">
-            <label>Meta Description</label>
-            <textarea id="meta-desc" style="min-height:80px;" placeholder="Write a compelling 150-160 char description..." oninput="updateSeoScore()"></textarea>
+          <div class="prompt-card" onclick="setPrompt('Analyze my competitors', 'And learn how you can outrank them.')">
+            <h4>Analyze my competitors</h4>
+            <p>And learn how you can outrank them.</p>
           </div>
-          <div style="margin-bottom:1rem;">
-            <label>Focus Keyword</label>
-            <input type="text" id="focus-keyword-writer" placeholder="Your target keyword..." oninput="updateSeoScore()"/>
+          <div class="prompt-card" onclick="setPrompt('Find my hidden opportunities', 'For quick SEO wins.')">
+            <h4>Find my hidden opportunities</h4>
+            <p>For quick SEO wins.</p>
           </div>
-          <div>
-            <label>Article Body (Markdown)</label>
-            <textarea id="article-body" class="writer-editor" placeholder="Write your article in Markdown format...&#10;&#10;## First Section&#10;&#10;Start writing here..." oninput="updateSeoScore()"></textarea>
-          </div>
-          <div class="status-bar">
-            <span>Words: <strong id="word-count">0</strong></span>
-            <span>Characters: <strong id="char-count">0</strong></span>
-            <span>Headings: <strong id="heading-count">0</strong></span>
-            <span>Reading Time: <strong id="reading-time">0 min</strong></span>
+          <div class="prompt-card" onclick="setPrompt('Write an SEO optimized article', 'For my tech blog.')">
+            <h4>Write an SEO article</h4>
+            <p>Ready to rank on page 1.</p>
           </div>
         </div>
-        <button class="btn btn-success" onclick="copyMarkdown()" style="margin-top:0.5rem;">ðŸ“‹ Copy as Markdown (for CMS)</button>
       </div>
       
-      <!-- SEO Score Sidebar -->
-      <div>
-        <div class="card" style="position:sticky;top:80px;">
-          <h3>ðŸ“Š Live SEO Score</h3>
-          <div class="seo-score-ring">
-            <svg width="120" height="120" viewBox="0 0 120 120">
-              <circle cx="60" cy="60" r="52" fill="none" stroke="var(--border)" stroke-width="8"/>
-              <circle cx="60" cy="60" r="52" fill="none" stroke="var(--accent)" stroke-width="8" stroke-dasharray="327" stroke-dashoffset="327" stroke-linecap="round" id="score-circle"/>
-            </svg>
-            <div class="score-text" id="score-value">0</div>
-          </div>
-          <div class="seo-checks" id="seo-checks"></div>
-        </div>
+    </div>
+
+    <!-- Input Area -->
+    <div class="input-area">
+      <div class="input-container">
+        <textarea id="chat-input" class="chat-input" placeholder="What are my main SEO competitors?" rows="1"></textarea>
+        <button id="send-btn" class="send-btn" onclick="sendMessage()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <!-- Article Modal -->
+  <div class="modal-overlay" id="article-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="modal-title">Article Preview</h3>
+        <button class="btn-outline" onclick="closeModal()" style="border:none;padding:0;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        </button>
+      </div>
+      <div class="modal-body" id="modal-body"></div>
+      <div class="modal-footer">
+        <button class="btn-outline" onclick="closeModal()">Close</button>
+        <button class="btn-outline" style="background:var(--text-primary);color:white;" onclick="copyModalContent()">Copy Markdown</button>
       </div>
     </div>
   </div>
-
-  <!-- Tab 3: AI Article Generator -->
-  <div class="tab-content" id="tab-generator">
-    <div class="card">
-      <h3>ðŸ”‘ Gemini API Key</h3>
-      <p style="color:var(--text-secondary);font-size:0.85rem;margin-bottom:1rem;">
-        Get your free API key from <a href="https://aistudio.google.com/apikey" target="_blank" style="color:var(--accent);">Google AI Studio</a>. 
-        It stays in your browser only â€” never sent to any server except Google's API.
-      </p>
-      <div class="api-key-row">
-        <div class="input-group">
-          <label>API Key</label>
-          <input type="text" id="api-key" placeholder="AIzaSy..." />
-        </div>
-        <button class="btn btn-primary" onclick="saveApiKey()">Save</button>
-      </div>
-      <span class="saved-badge" id="api-saved" style="display:none;">âœ“ Saved to browser</span>
-    </div>
-    
-    <div class="card">
-      <h3>ðŸ¤– Generate SEO-Optimized Article (ChatSEO Style)</h3>
-      <p style="color:var(--text-secondary);font-size:0.85rem;margin-bottom:1.5rem;">
-        Enter your topic and target keyword. The AI will generate a 5000-6000 word, deeply researched, 
-        long-form article with TL;DR, data tables, FAQ section, source citations, and proper SEO structure â€” 
-        just like ChatSEO.
-      </p>
-      <div class="gen-grid">
-        <div>
-          <label>Topic / Title</label>
-          <input type="text" id="gen-topic" placeholder="e.g. Moonshot AI Kimi K3 revenue share deal with Microsoft"/>
-        </div>
-        <div>
-          <label>Target Keyword</label>
-          <input type="text" id="gen-keyword" placeholder="e.g. moonshot ai kimi k3"/>
-        </div>
-      </div>
-      <div class="gen-grid">
-        <div>
-          <label>Category</label>
-          <select id="gen-category">
-            <option>AI Models</option>
-            <option>AI Business</option>
-            <option>AI Regulation</option>
-            <option>Global AI</option>
-            <option>Ai Tool and Tutorials</option>
-            <option>Tech News</option>
-          </select>
-        </div>
-        <div>
-          <label>Language</label>
-          <select id="gen-lang">
-            <option value="english">English</option>
-            <option value="hinglish">Hinglish (Hindi + English mix)</option>
-          </select>
-        </div>
-      </div>
-      <div style="margin-bottom:1rem;">
-        <label>Additional Instructions (Optional)</label>
-        <textarea id="gen-instructions" style="min-height:80px;" placeholder="e.g. Include comparison with DeepSeek V3, mention pricing details, focus on developer impact..."></textarea>
-      </div>
-      <div style="display:flex;gap:1rem;align-items:center;">
-        <button class="btn btn-primary" id="gen-btn" onclick="generateArticle()">ðŸš€ Generate Article (5000+ words)</button>
-        <span class="generating-text" id="gen-status" style="display:none;"><span class="loading"></span> Generating deep content... this takes 30-60 seconds</span>
-      </div>
-    </div>
-
-    <div class="card" id="gen-output-card" style="display:none;">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem;">
-        <h3>ðŸ“„ Generated Article</h3>
-        <div style="display:flex;gap:0.5rem;">
-          <button class="btn btn-secondary" onclick="copyGenerated()">ðŸ“‹ Copy Markdown</button>
-          <button class="btn btn-success" onclick="sendToEditor()">â†’ Send to Editor</button>
-        </div>
-      </div>
-      <div class="gen-output" id="gen-output"></div>
-      <div class="status-bar" style="margin-top:1rem;">
-        <span>Words: <strong id="gen-word-count">0</strong></span>
-        <span>Characters: <strong id="gen-char-count">0</strong></span>
-      </div>
-    </div>
-  </div>
-</div>
 
 <script is:inline>
-// ===== Tab Navigation =====
-document.querySelectorAll('.tab-btn').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-    btn.classList.add('active');
-    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
-  });
-});
+  // State
+  let chatHistory = [];
+  let currentModalMarkdown = '';
+  // Use pro model as it's more stable with tool calls
+  const MODEL_NAME = 'gemini-1.5-pro-latest'; 
 
-// ===== Keyword Research =====
-let focusKeyword = '';
-
-async function fetchKeywords() {
-  const query = document.getElementById('keyword-input').value.trim();
-  if (!query) return;
-  
-  const resultsDiv = document.getElementById('keyword-results');
-  resultsDiv.innerHTML = '<p style="color:var(--text-muted);">Searching...</p>';
-  
-  try {
-    // Fetch Google Autocomplete suggestions via CORS proxy
-    const suffixes = ['', ' vs', ' how', ' what', ' why', ' best', ' review', ' 2026', ' tools', ' explained'];
-    const allSuggestions = new Set();
+  // Initialize
+  window.addEventListener('load', () => {
+    const savedKey = localStorage.getItem('gemini_api_key');
+    if (savedKey) {
+      document.getElementById('api-key').value = savedKey;
+      document.getElementById('save-key-btn').textContent = 'Saved';
+    }
     
-    await Promise.all(suffixes.map(async (suffix) => {
-      try {
-        const targetUrl = `https://suggestqueries.google.com/complete/search?client=firefox&q=${encodeURIComponent(query + suffix)}`;
-        const resp = await fetch(`https://corsproxy.io/?${encodeURIComponent(targetUrl)}`);
-        const data = await resp.json();
-        if (data[1]) data[1].forEach(s => allSuggestions.add(s));
-      } catch(e) { /* ignore individual failures */ }
-    }));
+    // Auto-resize textarea
+    const input = document.getElementById('chat-input');
+    input.addEventListener('input', function() {
+      this.style.height = 'auto';
+      this.style.height = (this.scrollHeight) + 'px';
+      if(this.value.trim() === '') this.style.height = '56px';
+    });
+    
+    // Enter to send
+    input.addEventListener('keydown', function(e) {
+      if(e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+      }
+    });
+  });
 
-    if (allSuggestions.size === 0) {
-      resultsDiv.innerHTML = '<p style="color:var(--text-muted);">No suggestions found. Try a different topic.</p>';
+  function saveApiKey() {
+    const key = document.getElementById('api-key').value.trim();
+    if (key) {
+      localStorage.setItem('gemini_api_key', key);
+      const btn = document.getElementById('save-key-btn');
+      btn.textContent = 'Saved';
+      setTimeout(() => btn.textContent = 'Save Key', 2000);
+    }
+  }
+
+  function setPrompt(mainText, subText) {
+    const input = document.getElementById('chat-input');
+    input.value = mainText;
+    sendMessage();
+  }
+
+  function scrollToBottom() {
+    const container = document.getElementById('chat-container');
+    container.scrollTop = container.scrollHeight;
+  }
+
+  function addMessageToUI(role, htmlContent) {
+    const container = document.getElementById('chat-container');
+    const msgDiv = document.createElement('div');
+    msgDiv.className = `message ${role}`;
+    msgDiv.innerHTML = `
+      <div class="bubble">
+        ${htmlContent}
+      </div>
+    `;
+    container.appendChild(msgDiv);
+    scrollToBottom();
+    return msgDiv;
+  }
+
+  function showTypingIndicator() {
+    const container = document.getElementById('chat-container');
+    const msgDiv = document.createElement('div');
+    msgDiv.className = 'message assistant typing';
+    msgDiv.id = 'typing-indicator';
+    msgDiv.innerHTML = `
+      <div class="bubble" style="background:transparent;border:none;">
+        <div class="typing-indicator">
+          <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+        </div>
+      </div>
+    `;
+    container.appendChild(msgDiv);
+    scrollToBottom();
+  }
+
+  function hideTypingIndicator() {
+    const indicator = document.getElementById('typing-indicator');
+    if (indicator) indicator.remove();
+  }
+
+  // Define Tools
+  const tools = [
+    {
+      functionDeclarations: [
+        {
+          name: "getGoogleKeywordSuggestions",
+          description: "Fetches real-time search volume and autocomplete keyword suggestions from Google. Use this whenever the user asks for keywords, trends, or search volume.",
+          parameters: {
+            type: "OBJECT",
+            properties: {
+              query: {
+                type: "STRING",
+                description: "The core keyword or topic to search for."
+              }
+            },
+            required: ["query"]
+          }
+        },
+        {
+          name: "createSEOArticle",
+          description: "Creates and saves a fully formatted SEO-optimized article. Call this tool ONLY when the user explicitly asks to write, draft, or create an article/blog post.",
+          parameters: {
+            type: "OBJECT",
+            properties: {
+              title: {
+                type: "STRING",
+                description: "The SEO optimized title of the article."
+              },
+              content: {
+                type: "STRING",
+                description: "The full article content in Markdown format, should be at least 1500 words."
+              }
+            },
+            required: ["title", "content"]
+          }
+        }
+      ]
+    }
+  ];
+
+  // Tool Implementations
+  async function executeTool(name, args) {
+    if (name === 'getGoogleKeywordSuggestions') {
+      try {
+        const query = args.query;
+        // Fetch from google via proxy
+        const targetUrl = `https://suggestqueries.google.com/complete/search?client=firefox&q=${encodeURIComponent(query)}`;
+        const res = await fetch(`https://corsproxy.io/?${encodeURIComponent(targetUrl)}`);
+        const data = await res.json();
+        const suggestions = data[1] || [];
+        return {
+          keywords: suggestions,
+          note: "Present these keywords nicely to the user. Mention that these are live trending autocomplete suggestions."
+        };
+      } catch (e) {
+        return { error: "Failed to fetch keywords. Tell the user there was a network issue." };
+      }
+    } 
+    else if (name === 'createSEOArticle') {
+      // We will render a document card in the UI
+      const id = 'doc_' + Math.random().toString(36).substr(2, 9);
+      
+      // Store the article content in a global map
+      window.generatedArticles = window.generatedArticles || {};
+      window.generatedArticles[id] = args.content;
+      
+      const cardHtml = `
+        <div class="doc-card" onclick="openArticleModal('${id}', '${args.title.replace(/'/g, "\\'")}')">
+          <div class="doc-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h4"/><path d="M2 10h4"/><path d="M2 14h4"/><path d="M2 18h4"/><rect width="16" height="20" x="4" y="2" rx="2"/><path d="M9.5 8h5"/><path d="M9.5 12H16"/><path d="M9.5 16H14"/></svg>
+          </div>
+          <div class="doc-info">
+            <div class="doc-title">${args.title}</div>
+            <div class="doc-meta">Article created • Click to view</div>
+          </div>
+          <div>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-ellipsis"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+          </div>
+        </div>
+      `;
+      return { 
+        success: true, 
+        ui_element: cardHtml,
+        note: "Tell the user you have created the article and they can click the document card above to view or copy it." 
+      };
+    }
+    return { error: "Unknown tool" };
+  }
+
+  async function sendMessage() {
+    const apiKey = document.getElementById('api-key').value.trim();
+    if (!apiKey) {
+      alert("Please enter your Gemini API Key in the sidebar first.");
       return;
     }
 
-    let html = '<div style="margin-bottom:0.75rem;"><label>Click a keyword to select it as your Focus Keyword:</label></div><div class="keyword-chips">';
-    allSuggestions.forEach(kw => {
-      html += `<span class="keyword-chip" onclick="selectKeyword(this, '${kw.replace(/'/g, "\\'")}')">${kw}</span>`;
+    const inputEl = document.getElementById('chat-input');
+    const text = inputEl.value.trim();
+    if (!text) return;
+
+    // Remove empty state if present
+    const emptyState = document.getElementById('empty-state');
+    if (emptyState) emptyState.style.display = 'none';
+
+    // Add user message
+    addMessageToUI('user', text);
+    inputEl.value = '';
+    inputEl.style.height = '56px';
+    
+    // Add to history
+    chatHistory.push({
+      role: "user",
+      parts: [{ text: text }]
     });
-    html += '</div>';
-    resultsDiv.innerHTML = html;
-  } catch(e) {
-    resultsDiv.innerHTML = '<p style="color:var(--red);">Error fetching suggestions. Try again.</p>';
+
+    document.getElementById('send-btn').disabled = true;
+    showTypingIndicator();
+
+    await callGeminiApi(apiKey);
   }
-}
 
-function selectKeyword(el, keyword) {
-  document.querySelectorAll('.keyword-chip').forEach(c => c.classList.remove('selected'));
-  el.classList.add('selected');
-  focusKeyword = keyword;
-  document.getElementById('focus-keyword-card').style.display = 'block';
-  document.getElementById('focus-keyword-display').textContent = keyword;
-  document.getElementById('focus-keyword-writer').value = keyword;
-  document.getElementById('gen-keyword').value = keyword;
-  updateSeoScore();
-}
+  async function callGeminiApi(apiKey, isToolResponse = false) {
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${apiKey}`;
+    
+    const systemInstruction = `You are an expert AI SEO assistant for ChatSEO. Your goal is to help users analyze keywords, competitors, and write content.
+    - If the user asks for keywords or trends, ALWAYS use the getGoogleKeywordSuggestions tool.
+    - If the user asks to write an article, ALWAYS use the createSEOArticle tool. Do not output the article text in your chat response.
+    - Keep conversational responses concise and formatted cleanly using Markdown.
+    - Never break character. Be extremely helpful and authoritative.`;
 
-// ===== SEO Score =====
-function updateSeoScore() {
-  const title = document.getElementById('article-title').value;
-  const desc = document.getElementById('meta-desc').value;
-  const keyword = document.getElementById('focus-keyword-writer').value.toLowerCase();
-  const body = document.getElementById('article-body').value;
-  
-  const words = body.trim() ? body.trim().split(/\s+/).length : 0;
-  const chars = body.length;
-  const headings = (body.match(/^#{2,3}\s/gm) || []).length;
-  const readTime = Math.max(1, Math.ceil(words / 200));
-  
-  document.getElementById('word-count').textContent = words;
-  document.getElementById('char-count').textContent = chars;
-  document.getElementById('heading-count').textContent = headings;
-  document.getElementById('reading-time').textContent = readTime + ' min';
-  
-  const checks = [];
-  let score = 0;
-  const total = 10;
-  
-  // 1. Title length
-  const titleLen = title.length;
-  const titleOk = titleLen >= 50 && titleLen <= 65;
-  checks.push({ ok: titleOk, label: `Title Length (${titleLen} chars)`, hint: '50-65 chars optimal' });
-  if (titleOk) score++;
-  
-  // 2. Meta description
-  const descLen = desc.length;
-  const descOk = descLen >= 140 && descLen <= 165;
-  checks.push({ ok: descOk, label: `Meta Description (${descLen} chars)`, hint: '140-165 chars optimal' });
-  if (descOk) score++;
-  
-  // 3. Keyword in title
-  const kwInTitle = keyword && title.toLowerCase().includes(keyword);
-  checks.push({ ok: kwInTitle, label: 'Focus Keyword in Title', hint: keyword ? (kwInTitle ? 'Found' : 'Not found') : 'Set a keyword' });
-  if (kwInTitle) score++;
-  
-  // 4. Keyword in first paragraph
-  const firstPara = body.split('\n\n')[0] || '';
-  const kwInFirst = keyword && firstPara.toLowerCase().includes(keyword);
-  checks.push({ ok: kwInFirst, label: 'Keyword in First Paragraph', hint: keyword ? (kwInFirst ? 'Found' : 'Not found') : 'Set a keyword' });
-  if (kwInFirst) score++;
-  
-  // 5. Keyword density
-  let density = 0;
-  if (keyword && words > 0) {
-    const kwCount = (body.toLowerCase().match(new RegExp(keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g')) || []).length;
-    density = (kwCount / words) * 100;
-  }
-  const densityOk = density >= 0.8 && density <= 2.5;
-  checks.push({ ok: densityOk, label: `Keyword Density (${density.toFixed(1)}%)`, hint: '0.8-2.5% optimal' });
-  if (densityOk) score++;
-  
-  // 6. Word count
-  const wordsOk = words >= 1500;
-  checks.push({ ok: wordsOk, label: `Word Count (${words})`, hint: '1500+ words for ranking' });
-  if (wordsOk) score++;
-  
-  // 7. Headings
-  const headingsOk = headings >= 3;
-  checks.push({ ok: headingsOk, label: `Heading Structure (${headings} headings)`, hint: '3+ H2/H3 headings' });
-  if (headingsOk) score++;
-  
-  // 8. Internal links
-  const links = (body.match(/\[.*?\]\(.*?\)/g) || []).length;
-  const linksOk = links >= 2;
-  checks.push({ ok: linksOk, label: `Internal Links (${links} found)`, hint: '2+ links recommended' });
-  if (linksOk) score++;
-  
-  // 9. Images
-  const images = (body.match(/!\[.*?\]/g) || []).length;
-  const imagesOk = images >= 1;
-  checks.push({ ok: imagesOk, label: `Images (${images} found)`, hint: '1+ image recommended' });
-  if (imagesOk) score++;
-  
-  // 10. FAQ section
-  const hasFaq = body.toLowerCase().includes('faq') || body.toLowerCase().includes('frequently asked');
-  checks.push({ ok: hasFaq, label: 'FAQ Section', hint: hasFaq ? 'Found' : 'Add FAQ for rich snippets' });
-  if (hasFaq) score++;
-  
-  const pct = Math.round((score / total) * 100);
-  const circumference = 2 * Math.PI * 52;
-  const offset = circumference - (pct / 100) * circumference;
-  
-  const circle = document.getElementById('score-circle');
-  circle.style.strokeDashoffset = offset;
-  circle.style.stroke = pct >= 80 ? 'var(--green)' : pct >= 50 ? 'var(--yellow)' : 'var(--red)';
-  
-  const scoreText = document.getElementById('score-value');
-  scoreText.textContent = pct;
-  scoreText.style.color = pct >= 80 ? 'var(--green)' : pct >= 50 ? 'var(--yellow)' : 'var(--red)';
-  
-  let checksHtml = '';
-  checks.forEach(c => {
-    checksHtml += `<div class="seo-check">
-      <span class="icon">${c.ok ? 'âœ…' : 'âŒ'}</span>
-      <span class="label">${c.label}</span>
-      <span class="value" style="color:${c.ok ? 'var(--green)' : 'var(--text-muted)'}">${c.hint}</span>
-    </div>`;
-  });
-  document.getElementById('seo-checks').innerHTML = checksHtml;
-}
+    const requestBody = {
+      contents: chatHistory,
+      systemInstruction: { parts: [{ text: systemInstruction }] },
+      tools: tools
+    };
 
-function copyMarkdown() {
-  const title = document.getElementById('article-title').value;
-  const desc = document.getElementById('meta-desc').value;
-  const body = document.getElementById('article-body').value;
-  const md = `---\ntitle: "${title}"\ndescription: "${desc}"\n---\n\n${body}`;
-  navigator.clipboard.writeText(md);
-  alert('Copied! Now paste in Decap CMS editor.');
-}
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(requestBody)
+      });
+      const data = await response.json();
+      hideTypingIndicator();
 
-// ===== AI Article Generator =====
-function saveApiKey() {
-  const key = document.getElementById('api-key').value.trim();
-  if (key) {
-    localStorage.setItem('gemini_api_key', key);
-    document.getElementById('api-saved').style.display = 'inline';
-    setTimeout(() => document.getElementById('api-saved').style.display = 'none', 3000);
-  }
-}
+      if (data.error) {
+        addMessageToUI('assistant', `<p style="color:red">Error: ${data.error.message}</p>`);
+        document.getElementById('send-btn').disabled = false;
+        return;
+      }
 
-// Load saved key
-window.addEventListener('load', () => {
-  const savedKey = localStorage.getItem('gemini_api_key');
-  if (savedKey) document.getElementById('api-key').value = savedKey;
-  updateSeoScore();
-});
+      const candidate = data.candidates[0];
+      const part = candidate.content.parts[0];
 
-let generatedMarkdown = '';
+      // Store assistant's response in history (required if we want to send tool response back)
+      chatHistory.push(candidate.content);
 
-async function generateArticle() {
-  const apiKey = document.getElementById('api-key').value.trim() || localStorage.getItem('gemini_api_key');
-  if (!apiKey) { alert('Please enter your Gemini API key first.'); return; }
-  
-  const topic = document.getElementById('gen-topic').value.trim();
-  const keyword = document.getElementById('gen-keyword').value.trim();
-  const category = document.getElementById('gen-category').value;
-  const lang = document.getElementById('gen-lang').value;
-  const extra = document.getElementById('gen-instructions').value.trim();
-  
-  if (!topic) { alert('Please enter a topic.'); return; }
-  
-  const btn = document.getElementById('gen-btn');
-  const status = document.getElementById('gen-status');
-  btn.disabled = true;
-  status.style.display = 'flex';
-  
-  const langInstruction = lang === 'hinglish' 
-    ? 'Write in Hinglish (mix of Hindi and English, using English script). Use conversational Hindi tone but keep technical terms in English.'
-    : 'Write in clear, professional English.';
-
-  const systemPrompt = `You are an expert AI tech journalist writing for "AI Tech Safar" â€” a leading AI news publication. You write in the exact style of ChatSEO: deeply researched, long-form, authoritative articles that rank on Google.
-
-YOUR WRITING STYLE (CRITICAL â€” follow exactly):
-- Write 5000-6000 words minimum. NEVER write less than 4500 words.
-- Every claim must feel backed by data, numbers, or named sources.
-- Use a confident, direct editorial voice â€” not generic AI fluff.
-- Include specific numbers, percentages, dollar figures, dates, and named entities.
-- Add a "Reporting note" near the top explaining your editorial process.
-- Include an editor's personal take (from "Imran Khan Pathan, Editor").
-
-ARTICLE STRUCTURE (follow this exact structure):
-
-1. **TL;DR** â€” 3-4 bullet points summarizing the key facts at the very top
-2. **Reporting note** â€” 1-2 sentences about sourcing methodology
-3. **Editor's personal take** â€” A brief, authentic comment from the editor
-4. **Main Content** â€” 8-12 deep H2 sections, each with:
-   - Specific data points and numbers
-   - Named sources (Reuters, Bloomberg, company blogs, etc.)
-   - Analysis and implications
-   - Comparison tables where relevant
-5. **What We Don't Know Yet** â€” An honest section about unresolved questions
-6. **FAQ Section** â€” 5-6 detailed Q&As (important for Google FAQ rich snippets)
-7. **Related Reading on AI Tech Safar** â€” 3-5 internal links in format: [Title](https://www.aitechsafar.com/...)
-8. **Useful Sources** â€” 4-6 external source links with descriptions
-
-SEO REQUIREMENTS:
-- Use the target keyword "${keyword}" naturally 15-25 times throughout the article
-- Include the keyword in the first paragraph
-- Use variations and LSI keywords throughout
-- Use proper H2 (##) and H3 (###) markdown headings
-- Include comparison tables using markdown table syntax
-- Add blockquotes for key statements
-- ${langInstruction}
-
-CATEGORY: ${category}
-${extra ? 'ADDITIONAL INSTRUCTIONS: ' + extra : ''}
-
-Output ONLY the article body in clean Markdown format. Do NOT include frontmatter (---). Start directly with the TL;DR section.`;
-
-  try {
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: `Write a comprehensive, deeply researched, 5000-6000 word article about: "${topic}"\n\nTarget keyword: "${keyword}"` }] }],
-        systemInstruction: { parts: [{ text: systemPrompt }] },
-        generationConfig: {
-          temperature: 0.7,
-          maxOutputTokens: 65536,
-          topP: 0.95
+      // Check if it's a tool call
+      if (part.functionCall) {
+        const funcName = part.functionCall.name;
+        const funcArgs = part.functionCall.args;
+        
+        // Let user know we are doing something
+        showTypingIndicator();
+        
+        // Execute the tool locally
+        const toolResult = await executeTool(funcName, funcArgs);
+        
+        // If it generated a UI element (like the article card), append it directly to chat first
+        if (toolResult.ui_element) {
+          addMessageToUI('assistant', toolResult.ui_element);
         }
-      })
-    });
-    
-    const data = await response.json();
-    
-    if (data.candidates && data.candidates[0] && data.candidates[0].content) {
-      generatedMarkdown = data.candidates[0].content.parts[0].text;
-      
-      const outputDiv = document.getElementById('gen-output');
-      // Render markdown as formatted HTML (basic)
-      let html = generatedMarkdown
-        .replace(/^### (.*$)/gm, '<h3>$1</h3>')
-        .replace(/^## (.*$)/gm, '<h2>$1</h2>')
-        .replace(/^# (.*$)/gm, '<h1>$1</h1>')
-        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-        .replace(/\*(.*?)\*/g, '<em>$1</em>')
-        .replace(/^> (.*$)/gm, '<blockquote>$1</blockquote>')
-        .replace(/^- (.*$)/gm, '<li>$1</li>')
-        .replace(/\[([^\]]+)\]\(([^\)]+)\)/g, '<a href="$2" style="color:var(--accent)">$1</a>')
-        .replace(/\n\n/g, '<br/><br/>');
-      
-      outputDiv.innerHTML = html;
-      document.getElementById('gen-output-card').style.display = 'block';
-      
-      const genWords = generatedMarkdown.trim().split(/\s+/).length;
-      document.getElementById('gen-word-count').textContent = genWords;
-      document.getElementById('gen-char-count').textContent = generatedMarkdown.length;
-    } else {
-      const errorMsg = data.error ? data.error.message : 'Unknown error from Gemini API';
-      alert('Error: ' + errorMsg);
+
+        // Send tool response back to Gemini so it can generate the final conversational text
+        chatHistory.push({
+          role: "user",
+          parts: [{
+            functionResponse: {
+              name: funcName,
+              response: toolResult
+            }
+          }]
+        });
+        
+        // Call Gemini again with the tool response
+        await callGeminiApi(apiKey, true);
+
+      } else if (part.text) {
+        // Normal text response
+        const html = DOMPurify.sanitize(marked.parse(part.text));
+        addMessageToUI('assistant', html);
+        document.getElementById('send-btn').disabled = false;
+      }
+
+    } catch (err) {
+      hideTypingIndicator();
+      addMessageToUI('assistant', `<p style="color:red">Network error: ${err.message}</p>`);
+      document.getElementById('send-btn').disabled = false;
     }
-  } catch(e) {
-    alert('Network error: ' + e.message);
-  } finally {
-    btn.disabled = false;
-    status.style.display = 'none';
   }
-}
 
-function copyGenerated() {
-  if (generatedMarkdown) {
-    navigator.clipboard.writeText(generatedMarkdown);
-    alert('Markdown copied! Paste in Decap CMS or the Writer tab.');
+  // Modal Functions
+  function openArticleModal(id, title) {
+    const mdContent = window.generatedArticles[id];
+    if (!mdContent) return;
+    
+    currentModalMarkdown = mdContent;
+    document.getElementById('modal-title').textContent = title;
+    
+    // Parse markdown to HTML for preview
+    const html = DOMPurify.sanitize(marked.parse(mdContent));
+    document.getElementById('modal-body').innerHTML = `
+      <div style="font-family: serif; line-height: 1.8;">
+        <h1>${title}</h1>
+        ${html}
+      </div>
+    `;
+    
+    document.getElementById('article-modal').style.display = 'flex';
   }
-}
 
-function sendToEditor() {
-  if (generatedMarkdown) {
-    document.getElementById('article-body').value = generatedMarkdown;
-    // Switch to writer tab
-    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-    document.querySelectorAll('.tab-btn')[1].classList.add('active');
-    document.getElementById('tab-writer').classList.add('active');
-    updateSeoScore();
+  function closeModal() {
+    document.getElementById('article-modal').style.display = 'none';
   }
-}
+
+  function copyModalContent() {
+    if (currentModalMarkdown) {
+      navigator.clipboard.writeText(currentModalMarkdown);
+      alert('Markdown copied to clipboard! You can paste it directly into your CMS.');
+    }
+  }
 </script>
+
 </body>
 </html>
-
