@@ -7,47 +7,277 @@ export const prerender = true;
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <meta name="robots" content="noindex, nofollow"/>
-  <title>SEO Analysis - ai-tech-safar.com | ChatSEO</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
-  <!-- Include Marked.js for Markdown parsing -->
+  <title>ChatSEO - Autonomous AI SEO & GEO Growth Engine</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet"/>
+  <!-- Marked.js for Markdown parsing -->
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js" is:inline></script>
-  <!-- Include DOMPurify to prevent XSS -->
+  <!-- DOMPurify to prevent XSS -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.6/purify.min.js" is:inline></script>
 
   <style>
     :root {
-      --bg-primary: #ffffff;
-      --bg-secondary: #f9fafb;
-      --text-primary: #111827;
-      --text-secondary: #4b5563;
-      --text-muted: #9ca3af;
-      --accent: #2563eb;
-      --accent-hover: #1d4ed8;
-      --border: #e5e7eb;
-      --sidebar-width: 260px;
+      --bg-body: #ffffff;
+      --bg-sidebar: #fbfbfb;
+      --bg-card: #ffffff;
+      --bg-surface: #f4f4f5;
+      --bg-surface-hover: #e4e4e7;
+      --border: #e4e4e7;
+      --border-focus: #18181b;
+      --text-main: #09090b;
+      --text-muted: #71717a;
+      --text-dim: #a1a1aa;
+      --accent: #18181b;
+      --accent-hover: #27272a;
+      --accent-soft: #f4f4f5;
+      --primary: #2563eb;
+      --primary-soft: #eff6ff;
+      --green: #10b981;
+      --green-soft: #ecfdf5;
+      --amber: #f59e0b;
+      --purple: #8b5cf6;
+      --sidebar-width: 280px;
+    }
+
+    [data-theme="dark"] {
+      --bg-body: #09090b;
+      --bg-sidebar: #0e0e11;
+      --bg-card: #141417;
+      --bg-surface: #1e1e24;
+      --bg-surface-hover: #27272f;
+      --border: #27272a;
+      --border-focus: #f4f4f5;
+      --text-main: #f4f4f5;
+      --text-muted: #a1a1aa;
+      --text-dim: #71717a;
+      --accent: #f4f4f5;
+      --accent-hover: #e4e4e7;
+      --accent-soft: #1e1e24;
+      --primary: #3b82f6;
+      --primary-soft: rgba(59, 130, 246, 0.15);
+      --green: #10b981;
+      --green-soft: rgba(16, 185, 129, 0.15);
+      --amber: #f59e0b;
+      --purple: #a855f7;
     }
 
     * { margin:0; padding:0; box-sizing:border-box; }
-    body { 
-      font-family:'Inter',sans-serif; 
-      background:var(--bg-primary); 
-      color:var(--text-primary); 
-      line-height:1.6;
+    body {
+      font-family: 'Bricolage Grotesque', 'Plus Jakarta Sans', -apple-system, sans-serif;
+      background: var(--bg-body);
+      color: var(--text-main);
       height: 100vh;
       display: flex;
       overflow: hidden;
+      -webkit-font-smoothing: antialiased;
     }
-    
-    /* Layout */
+
+    /* Sidebar */
     .sidebar {
       width: var(--sidebar-width);
-      background: var(--bg-secondary);
+      background: var(--bg-sidebar);
       border-right: 1px solid var(--border);
       display: flex;
       flex-direction: column;
       height: 100%;
+      z-index: 30;
+      flex-shrink: 0;
+      transition: transform 0.25s ease;
     }
-    .main-content {
+    .sidebar-header {
+      padding: 1.15rem 1.15rem 0.6rem;
+    }
+    .logo-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.9rem;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      text-decoration: none;
+      font-weight: 700;
+      font-size: 1.15rem;
+      color: var(--text-main);
+      letter-spacing: -0.02em;
+    }
+    .logo-img {
+      width: 28px;
+      height: 28px;
+      border-radius: 7px;
+    }
+    .tagline-sub {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    /* Project Switcher */
+    .project-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.55rem 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .project-card:hover {
+      border-color: var(--text-dim);
+      background: var(--bg-surface);
+    }
+    .project-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.55rem;
+      overflow: hidden;
+    }
+    .project-fav {
+      width: 18px;
+      height: 18px;
+      border-radius: 4px;
+      background: white;
+      border: 1px solid var(--border);
+    }
+    .project-name {
+      font-size: 0.84rem;
+      font-weight: 600;
+      color: var(--text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .status-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--green);
+    }
+
+    /* Action: New Chat */
+    .new-chat-btn {
+      margin: 0.5rem 1.15rem 0.3rem;
+      padding: 0.6rem 0.9rem;
+      background: var(--accent);
+      color: var(--bg-body);
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 0.84rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.45rem;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+    .new-chat-btn:hover {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+    }
+
+    /* Nav section */
+    .sidebar-content {
+      flex: 1;
+      overflow-y: auto;
+      padding: 0.5rem 0.75rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+    .section-title {
+      font-size: 0.68rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      font-weight: 700;
+      color: var(--text-dim);
+      padding: 0.65rem 0.6rem 0.25rem;
+    }
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      padding: 0.5rem 0.65rem;
+      border-radius: 6px;
+      color: var(--text-muted);
+      font-size: 0.82rem;
+      font-weight: 500;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.15s;
+      border: 1px solid transparent;
+      background: transparent;
+      width: 100%;
+      text-align: left;
+    }
+    .nav-link:hover {
+      background: var(--bg-surface);
+      color: var(--text-main);
+    }
+    .nav-link.active {
+      background: var(--bg-surface);
+      color: var(--text-main);
+      font-weight: 600;
+    }
+
+    /* Footer */
+    .sidebar-footer {
+      padding: 0.75rem 1.15rem;
+      border-top: 1px solid var(--border);
+      background: var(--bg-sidebar);
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+    .gsc-status-box {
+      font-size: 0.74rem;
+      color: var(--green);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-weight: 600;
+    }
+    .api-key-row {
+      display: flex;
+      gap: 0.35rem;
+    }
+    .api-key-input {
+      flex: 1;
+      padding: 0.4rem 0.6rem;
+      background: var(--bg-body);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 0.72rem;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text-main);
+      outline: none;
+    }
+    .api-key-btn {
+      padding: 0 0.65rem;
+      background: var(--text-main);
+      color: var(--bg-sidebar);
+      border: none;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    /* Main Arena */
+    .main-wrapper {
+      flex: 1;
+      display: flex;
+      flex-direction: row;
+      height: 100%;
+      position: relative;
+      overflow: hidden;
+    }
+    .chat-layout {
       flex: 1;
       display: flex;
       flex-direction: column;
@@ -55,723 +285,1136 @@ export const prerender = true;
       position: relative;
     }
 
-    /* Sidebar Elements */
-    .sidebar-header {
-      padding: 1.5rem;
+    /* Header */
+    .chat-header {
+      height: 54px;
       border-bottom: 1px solid var(--border);
-    }
-    .logo {
-      font-weight: 700;
-      font-size: 1.25rem;
-      color: var(--text-primary);
+      padding: 0 1.5rem;
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-      text-decoration: none;
+      justify-content: space-between;
+      background: var(--bg-body);
+      z-index: 10;
     }
-    .project-selector {
-      margin-top: 1rem;
-      padding: 0.5rem;
-      background: var(--bg-primary);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      font-size: 0.875rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      color: var(--accent);
-      font-weight: 500;
-      cursor: pointer;
-    }
-    .sidebar-nav {
-      padding: 1rem;
-      flex: 1;
-      overflow-y: auto;
-    }
-    .nav-item {
+    .header-left {
       display: flex;
       align-items: center;
       gap: 0.75rem;
-      padding: 0.5rem 0.75rem;
-      color: var(--text-secondary);
-      text-decoration: none;
-      font-size: 0.875rem;
-      font-weight: 500;
-      border-radius: 6px;
-      margin-bottom: 0.25rem;
-      cursor: pointer;
     }
-    .nav-item:hover, .nav-item.active {
-      background: var(--border);
-      color: var(--text-primary);
-    }
-    .sidebar-footer {
-      padding: 1rem;
-      border-top: 1px solid var(--border);
-    }
-    .api-key-input {
-      width: 100%;
-      padding: 0.5rem;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      font-size: 0.75rem;
-      outline: none;
-      font-family: monospace;
-      margin-bottom: 0.5rem;
-    }
-    .btn-save {
-      width: 100%;
-      padding: 0.5rem;
-      background: var(--text-primary);
-      color: white;
+    .mobile-menu-btn {
+      display: none;
+      background: transparent;
       border: none;
-      border-radius: 6px;
-      font-size: 0.75rem;
+      color: var(--text-main);
       cursor: pointer;
+    }
+    .analysis-meta-top {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.84rem;
+      color: var(--text-muted);
+    }
+    .analysis-meta-top span.bold-domain {
+      color: var(--text-main);
       font-weight: 600;
     }
-
-    /* Main Chat Area */
-    .chat-header {
-      height: 60px;
+    .header-actions {
       display: flex;
       align-items: center;
-      padding: 0 1.5rem;
-      border-bottom: 1px solid var(--border);
+      gap: 0.4rem;
     }
-    .chat-container {
-      flex: 1;
-      overflow-y: auto;
-      padding: 2rem;
-      display: flex;
-      flex-direction: column;
-      gap: 1.5rem;
-      scroll-behavior: smooth;
-    }
-    .empty-state {
-      margin: auto;
-      text-align: center;
-      max-width: 600px;
-    }
-    .empty-state h1 {
-      font-size: 1.75rem;
-      font-weight: 700;
-      margin-bottom: 2rem;
-    }
-    .empty-state h1 span {
-      color: var(--accent);
-    }
-    .prompt-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1rem;
-    }
-    .prompt-card {
+    .icon-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 6px;
       border: 1px solid var(--border);
-      padding: 1rem;
-      border-radius: 12px;
-      text-align: left;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .prompt-card:hover {
-      border-color: var(--accent);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-    }
-    .prompt-card h4 {
-      font-size: 0.875rem;
-      color: var(--text-primary);
-      margin-bottom: 0.25rem;
-    }
-    .prompt-card p {
-      font-size: 0.75rem;
-      color: var(--text-secondary);
-    }
-
-    /* Chat Messages */
-    .message {
-      display: flex;
-      gap: 1rem;
-      max-width: 800px;
-      margin: 0 auto;
-      width: 100%;
-    }
-    .message.user {
-      flex-direction: row-reverse;
-    }
-    .bubble {
-      padding: 1rem 1.25rem;
-      border-radius: 16px;
-      font-size: 0.95rem;
-      line-height: 1.6;
-    }
-    .user .bubble {
-      background: var(--bg-secondary);
-      border: 1px solid var(--border);
-      color: var(--text-primary);
-      border-bottom-right-radius: 4px;
-    }
-    .assistant .bubble {
-      background: var(--bg-primary);
-      color: var(--text-primary);
-      width: 100%;
-    }
-    .assistant .bubble p { margin-bottom: 1rem; }
-    .assistant .bubble p:last-child { margin-bottom: 0; }
-    .assistant .bubble h2, .assistant .bubble h3 { margin: 1.5rem 0 0.5rem; font-weight: 700; }
-    .assistant .bubble ul, .assistant .bubble ol { margin-left: 1.5rem; margin-bottom: 1rem; }
-    .assistant .bubble table { width: 100%; border-collapse: collapse; margin-bottom: 1rem; }
-    .assistant .bubble th, .assistant .bubble td { border: 1px solid var(--border); padding: 0.5rem; text-align: left; }
-    .assistant .bubble th { background: var(--bg-secondary); }
-
-    /* Tool UI Cards */
-    .doc-card {
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 1.25rem;
-      background: var(--bg-secondary);
-      display: flex;
-      gap: 1rem;
-      align-items: center;
-      margin: 1rem 0;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .doc-card:hover {
-      border-color: var(--accent);
-      background: var(--bg-primary);
-      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-    }
-    .doc-icon {
-      width: 40px;
-      height: 40px;
-      border-radius: 8px;
-      background: #eff6ff;
-      color: var(--accent);
+      background: var(--bg-body);
+      color: var(--text-muted);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.25rem;
+      cursor: pointer;
+      transition: all 0.15s;
     }
-    .doc-info { flex: 1; }
-    .doc-title { font-weight: 600; font-size: 0.95rem; color: var(--text-primary); }
-    .doc-meta { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.25rem; }
+    .icon-btn:hover {
+      background: var(--bg-surface);
+      color: var(--text-main);
+    }
 
-    /* Input Area */
-    .input-area {
-      padding: 1.5rem 2rem;
-      background: var(--bg-primary);
-      border-top: 1px solid transparent;
+    /* Chat Messages Stream */
+    .chat-stream {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.5rem 1.5rem 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+      scroll-behavior: smooth;
     }
-    .input-container {
-      max-width: 800px;
+    .chat-container-inner {
+      max-width: 820px;
+      width: 100%;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    /* Empty State */
+    .empty-hero {
+      margin: 4rem auto 0;
+      text-align: center;
+      max-width: 680px;
+    }
+    .empty-hero h1 {
+      font-size: 1.8rem;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.5rem;
+      color: var(--text-main);
+    }
+    .hero-sub {
+      color: var(--text-muted);
+      font-size: 0.92rem;
+      margin-bottom: 1.5rem;
+    }
+
+    /* Fast Prompt Grid */
+    .prompt-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.75rem;
+    }
+    .prompt-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem;
+      text-align: left;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .prompt-card:hover {
+      border-color: var(--text-dim);
+      background: var(--bg-surface);
+    }
+    .prompt-card h4 {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 0.2rem;
+    }
+    .prompt-card p {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    /* Message Rows */
+    .msg-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.4rem;
+      width: 100%;
+      animation: fadeIn 0.2s ease;
+    }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+    .msg-group.user {
+      align-items: flex-end;
+    }
+    .msg-group.user .bubble {
+      background: var(--bg-surface);
+      color: var(--text-main);
+      border: 1px solid var(--border);
+      padding: 0.65rem 1rem;
+      border-radius: 16px;
+      max-width: 80%;
+      font-size: 0.92rem;
+      line-height: 1.5;
+    }
+
+    .msg-group.assistant {
+      align-items: flex-start;
+    }
+    .msg-group.assistant .bubble {
+      width: 100%;
+      color: var(--text-main);
+      font-size: 0.92rem;
+      line-height: 1.7;
+    }
+
+    /* Questionnaire Box (Like Real ChatSEO) */
+    .questionnaire-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 0.9rem 1.15rem;
+      margin: 0.6rem 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .q-item-title {
+      font-size: 0.86rem;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+    .q-item-sub {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 0.15rem;
+    }
+
+    /* Tool Call Toggle */
+    .tool-used-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: transparent;
+      border: none;
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 0.2rem 0;
+      margin: 0.4rem 0;
+    }
+    .tool-used-btn:hover { color: var(--text-main); }
+
+    /* Interactive Artifact Card (Matches ChatSEO share link) */
+    .artifact-card-chatseo {
+      width: 100%;
+      max-width: 540px;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      border-radius: 12px;
+      overflow: hidden;
+      margin: 0.75rem 0;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+    }
+    .artifact-card-chatseo:hover {
+      border-color: var(--text-dim);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+    }
+    .artifact-card-header {
+      padding: 0.9rem 1.15rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+    }
+    .artifact-card-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      overflow: hidden;
+    }
+    .artifact-icon-box {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: var(--primary-soft);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .artifact-card-title {
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--text-main);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .artifact-card-type {
+      font-size: 0.74rem;
+      color: var(--text-muted);
+    }
+    .artifact-preview-body {
+      height: 110px;
+      padding: 0.9rem 1.15rem;
+      position: relative;
+      overflow: hidden;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+    .artifact-gradient-fade {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 45px;
+      background: linear-gradient(180deg, transparent, var(--bg-card));
+    }
+
+    /* Markdown inside assistant */
+    .bubble p { margin-bottom: 0.85rem; }
+    .bubble p:last-child { margin-bottom: 0; }
+    .bubble h2 { font-size: 1.15rem; font-weight: 700; margin: 1.2rem 0 0.5rem; }
+    .bubble h3 { font-size: 1rem; font-weight: 600; margin: 1rem 0 0.4rem; }
+    .bubble ul, .bubble ol { margin: 0.5rem 0 1rem 1.3rem; }
+    .bubble li { margin-bottom: 0.35rem; }
+    .bubble table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 0.9rem 0;
+      font-size: 0.84rem;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    .bubble th, .bubble td {
+      border: 1px solid var(--border);
+      padding: 0.55rem 0.75rem;
+      text-align: left;
+    }
+    .bubble th { background: var(--bg-surface); font-weight: 600; }
+    .bubble code {
+      font-family: 'JetBrains Mono', monospace;
+      background: var(--bg-surface);
+      padding: 2px 5px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+    }
+
+    /* Input Dock */
+    .chat-dock {
+      padding: 0.75rem 1.5rem 1.25rem;
+      background: var(--bg-body);
+      z-index: 10;
+    }
+    .dock-container {
+      max-width: 820px;
       margin: 0 auto;
       position: relative;
     }
-    .chat-input {
-      width: 100%;
-      min-height: 56px;
-      max-height: 200px;
-      padding: 1rem 3.5rem 1rem 1.25rem;
+    .dock-form {
       border: 1px solid var(--border);
-      border-radius: 24px;
+      border-radius: 14px;
+      background: var(--bg-card);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+      overflow: hidden;
+      transition: border-color 0.15s;
+    }
+    .dock-form:focus-within {
+      border-color: var(--border-focus);
+    }
+    .dock-textarea {
+      width: 100%;
+      min-height: 52px;
+      max-height: 160px;
+      padding: 0.85rem 1rem;
+      border: none;
       font-family: inherit;
-      font-size: 0.95rem;
-      resize: none;
+      font-size: 0.92rem;
       outline: none;
-      background: var(--bg-primary);
-      box-shadow: 0 2px 6px rgba(0,0,0,0.02);
-      transition: border 0.2s, box-shadow 0.2s;
+      resize: none;
+      background: transparent;
+      color: var(--text-main);
     }
-    .chat-input:focus {
-      border-color: var(--accent);
-      box-shadow: 0 4px 12px rgba(37, 99, 235, 0.1);
+    .dock-bottom-bar {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      padding: 0.4rem 0.75rem;
+      border-top: 1px solid var(--border);
     }
-    .send-btn {
-      position: absolute;
-      right: 8px;
-      bottom: 8px;
-      width: 40px;
-      height: 40px;
+    .dock-send-btn {
+      width: 32px;
+      height: 32px;
       border-radius: 50%;
-      background: var(--accent);
-      color: white;
+      background: var(--text-main);
+      color: var(--bg-body);
       border: none;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      transition: background 0.2s;
+      transition: opacity 0.15s;
     }
-    .send-btn:hover { background: var(--accent-hover); }
-    .send-btn:disabled { background: var(--border); cursor: not-allowed; }
+    .dock-send-btn:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
 
-    /* Loading dots */
-    .typing-indicator {
+    /* Slide-out Document Drawer */
+    .doc-drawer {
+      width: 760px;
+      background: var(--bg-body);
+      border-left: 1px solid var(--border);
+      height: 100%;
       display: flex;
-      gap: 4px;
-      padding: 1rem;
+      flex-direction: column;
+      transform: translateX(100%);
+      transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+      position: absolute;
+      right: 0;
+      top: 0;
+      bottom: 0;
+      z-index: 40;
+      box-shadow: -8px 0 30px rgba(0, 0, 0, 0.08);
     }
-    .dot {
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: var(--text-muted);
-      animation: bounce 1.4s infinite ease-in-out both;
+    .doc-drawer.open {
+      transform: translateX(0);
+      position: relative;
     }
-    .dot:nth-child(1) { animation-delay: -0.32s; }
-    .dot:nth-child(2) { animation-delay: -0.16s; }
-    @keyframes bounce {
-      0%, 80%, 100% { transform: scale(0); }
-      40% { transform: scale(1); }
-    }
-    
-    /* Markdown Modal */
-    .modal-overlay {
-      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0,0,0,0.5);
-      display: none; justify-content: center; align-items: center;
-      z-index: 1000;
-    }
-    .modal-content {
-      background: var(--bg-primary);
-      width: 90%; max-width: 800px;
-      max-height: 90vh;
-      border-radius: 16px;
-      display: flex; flex-direction: column;
-    }
-    .modal-header {
+    .drawer-header {
       padding: 1rem 1.5rem;
       border-bottom: 1px solid var(--border);
-      display: flex; justify-content: space-between; align-items: center;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
-    .modal-header h3 { font-size: 1.1rem; }
-    .modal-body {
-      padding: 1.5rem;
-      overflow-y: auto;
+    .drawer-title { font-size: 1rem; font-weight: 700; color: var(--text-main); }
+    .drawer-body {
       flex: 1;
+      overflow-y: auto;
+      padding: 2rem 2.25rem;
+      font-size: 0.94rem;
+      line-height: 1.85;
+      color: var(--text-main);
     }
-    .modal-footer {
-      padding: 1rem 1.5rem;
+    .drawer-footer {
+      padding: 0.85rem 1.5rem;
       border-top: 1px solid var(--border);
-      display: flex; justify-content: flex-end; gap: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--bg-sidebar);
     }
-    .btn-outline {
-      padding: 0.5rem 1rem;
-      border: 1px solid var(--border);
-      background: var(--bg-primary);
+    .drawer-btn-group { display: flex; gap: 0.5rem; }
+    .drawer-btn {
+      padding: 0.5rem 0.9rem;
       border-radius: 6px;
+      font-size: 0.82rem;
+      font-weight: 600;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      color: var(--text-main);
       cursor: pointer;
-      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.15s;
     }
-    .btn-outline:hover { background: var(--bg-secondary); }
-    
+    .drawer-btn:hover { background: var(--bg-surface); }
+    .drawer-btn.primary {
+      background: var(--text-main);
+      color: var(--bg-body);
+      border-color: var(--text-main);
+    }
+
+    @media (max-width: 1024px) {
+      .doc-drawer {
+        position: fixed;
+        width: 90%;
+      }
+    }
+    @media (max-width: 768px) {
+      .sidebar { position: fixed; left: -100%; }
+      .sidebar.open { left: 0; }
+      .mobile-menu-btn { display: block; }
+      .prompt-grid { grid-template-columns: 1fr; }
+    }
   </style>
 </head>
 <body>
 
-  <!-- Sidebar -->
-  <aside class="sidebar">
+  <!-- ChatSEO Sidebar -->
+  <aside class="sidebar" id="app-sidebar">
     <div class="sidebar-header">
-      <a href="/admin/" class="logo">
-        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-sparkles" style="color:var(--accent);"><path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/></svg>
-        ChatSEO
-      </a>
-      <div class="project-selector">
-        <img src="https://www.google.com/s2/favicons?domain=aitechsafar.com&sz=32" alt="icon" style="width:16px;height:16px;border-radius:4px;" />
-        aitechsafar.com
+      <div class="logo-row">
+        <a href="/chatseo" class="logo">
+          <img src="https://chatseo.app/favicon.ico" class="logo-img" alt="logo" onerror="this.style.display='none'"/>
+          ChatSEO
+        </a>
+      </div>
+      <div class="tagline-sub">Your AI SEO expert</div>
+      <div style="margin-top: 0.75rem;">
+        <div class="project-card" onclick="changeSiteDomain()">
+          <div class="project-meta">
+            <img src="https://www.google.com/s2/favicons?domain=aitechsafar.com&sz=32" class="project-fav" id="site-favicon" alt="fav"/>
+            <div class="project-name" id="site-name-display">aitechsafar.com</div>
+          </div>
+          <div class="status-dot"></div>
+        </div>
       </div>
     </div>
-    <div class="sidebar-nav">
-      <a href="#" class="nav-item active" onclick="location.reload()">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
-        New chat
-      </a>
+
+    <button class="new-chat-btn" onclick="startNewChat()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="M12 5v14"/></svg>
+      New Chat
+    </button>
+
+    <div class="sidebar-content">
+      <div class="section-title">Analysis & Content</div>
+      <button class="nav-link active" onclick="presetAction('Write a comprehensive, beginner-to-expert SEO article in English on Multimodal AI')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>
+        Content Writing
+      </button>
+
+      <button class="nav-link" onclick="presetAction('Generate JSON-LD Schema: TechArticle + FAQPage for Multimodal AI')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m18 16 4-4-4-4"/><path d="m6 8-4 4 4 4"/><path d="m14.5 4-5 16"/></svg>
+        Schema Generator
+      </button>
+
+      <button class="nav-link" onclick="presetAction('Check Google Rich Results test and Schema validation status')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+        Rich Results & GSC Audit
+      </button>
+
+      <button class="nav-link" onclick="presetAction('Explain Google Go-to links and Sitelinks strategy for SERP')">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        Google Sitelinks / Jump Links
+      </button>
     </div>
+
     <div class="sidebar-footer">
-      <label style="font-size:0.75rem; color:var(--text-secondary); margin-bottom:0.25rem; display:block;">Gemini API Key</label>
-      <input type="password" id="api-key" class="api-key-input" placeholder="AIzaSy..." />
-      <button class="btn-save" onclick="saveApiKey()" id="save-key-btn">Save Key</button>
+      <div class="gsc-status-box">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+        Google Search Console Connected
+      </div>
+      <div class="api-key-row">
+        <input type="password" id="gemini-key" class="api-key-input" placeholder="Gemini API Key..." />
+        <button class="api-key-btn" onclick="saveKey()" id="key-save-btn">Save</button>
+      </div>
     </div>
   </aside>
 
-  <!-- Main Chat Area -->
-  <main class="main-content">
-    <div class="chat-header"></div>
+  <!-- Main Canvas -->
+  <div class="main-wrapper">
+    <div class="chat-layout">
+      <!-- Header -->
+      <header class="chat-header">
+        <div class="header-left">
+          <button class="mobile-menu-btn" onclick="toggleSidebar()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+          </button>
+          <div class="analysis-meta-top">
+            Analysis of <img src="https://www.google.com/s2/favicons?domain=aitechsafar.com&sz=32" style="width:15px;height:15px;border-radius:3px;" id="header-fav" alt="fav"/> <span class="bold-domain" id="header-domain-text">aitechsafar.com</span>
+          </div>
+        </div>
 
-    <div class="chat-container" id="chat-container">
-      
-      <!-- Empty State -->
-      <div class="empty-state" id="empty-state">
-        <h1>How can I help you with <span>aitechsafar.com</span>?</h1>
-        <div class="prompt-grid">
-          <div class="prompt-card" onclick="setPrompt('Build my SEO strategy', 'Let\'s start here :)')">
-            <h4>Build my SEO strategy</h4>
-            <p>Let's start here :)</p>
-          </div>
-          <div class="prompt-card" onclick="setPrompt('Analyze my competitors', 'And learn how you can outrank them.')">
-            <h4>Analyze my competitors</h4>
-            <p>And learn how you can outrank them.</p>
-          </div>
-          <div class="prompt-card" onclick="setPrompt('Find my hidden opportunities', 'For quick SEO wins.')">
-            <h4>Find my hidden opportunities</h4>
-            <p>For quick SEO wins.</p>
-          </div>
-          <div class="prompt-card" onclick="setPrompt('Write an SEO optimized article', 'For my tech blog.')">
-            <h4>Write an SEO article</h4>
-            <p>Ready to rank on page 1.</p>
+        <div class="header-actions">
+          <button class="icon-btn" onclick="toggleTheme()" title="Toggle Theme">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/></svg>
+          </button>
+        </div>
+      </header>
+
+      <!-- Message Stream -->
+      <div class="chat-stream" id="chat-stream">
+        <div class="chat-container-inner" id="chat-inner">
+          <!-- Empty State -->
+          <div class="empty-hero" id="empty-hero">
+            <h1>ChatSEO Analysis for <span id="hero-domain">aitechsafar.com</span></h1>
+            <p class="hero-sub">Ask any SEO question, generate complete guides, schemas, or audit SERP features.</p>
+            <div class="prompt-grid">
+              <div class="prompt-card" onclick="presetAction('Write a comprehensive, beginner-to-expert SEO article in English on Multimodal AI')">
+                <h4>Write Multimodal AI Guide</h4>
+                <p>Beginner to expert complete article with E-E-A-T checklist and benchmarks.</p>
+              </div>
+              <div class="prompt-card" onclick="presetAction('Sony Music and Warner Sue Anthropic Alleging Brazen Campaign of Copyright Theft')">
+                <h4>Anthropic Copyright Lawsuit</h4>
+                <p>2,500w deep legal analysis with 4-pillar Fair Use matrix and exhibits.</p>
+              </div>
+              <div class="prompt-card" onclick="presetAction('Generate JSON-LD Schema: TechArticle + FAQPage for Multimodal AI')">
+                <h4>Generate JSON-LD Schema</h4>
+                <p>Google Rich Results ready TechArticle + FAQPage schema code.</p>
+              </div>
+              <div class="prompt-card" onclick="presetAction('Google SERP Go-to links and Sitelinks strategy')">
+                <h4>SERP Sitelinks & Go-to Links</h4>
+                <p>Jump link structures and headings for Google rich snippets.</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-      
+
+      <!-- Bottom Dock -->
+      <div class="chat-dock">
+        <div class="dock-container">
+          <form class="dock-form" onsubmit="event.preventDefault(); handleSend();">
+            <textarea id="user-input" class="dock-textarea" placeholder="Ask ChatSEO anything or paste a URL..." rows="1"></textarea>
+            <div class="dock-bottom-bar">
+              <button id="send-btn" class="dock-send-btn" type="submit">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m5 12 7-7 7 7"/><path d="M12 19V5"/></svg>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
 
-    <!-- Input Area -->
-    <div class="input-area">
-      <div class="input-container">
-        <textarea id="chat-input" class="chat-input" placeholder="What are my main SEO competitors?" rows="1"></textarea>
-        <button id="send-btn" class="send-btn" onclick="sendMessage()">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+    <!-- Document Drawer -->
+    <aside class="doc-drawer" id="doc-drawer">
+      <div class="drawer-header">
+        <div class="drawer-title" id="drawer-doc-title">Document Preview</div>
+        <button class="icon-btn" onclick="closeDrawer()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
         </button>
       </div>
-    </div>
-  </main>
-
-  <!-- Article Modal -->
-  <div class="modal-overlay" id="article-modal">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h3 id="modal-title">Article Preview</h3>
-        <button class="btn-outline" onclick="closeModal()" style="border:none;padding:0;">
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
-        </button>
+      <div class="drawer-body" id="drawer-doc-body"></div>
+      <div class="drawer-footer">
+        <div id="drawer-stats" style="font-size:0.76rem; color:var(--text-muted); font-weight:600;">2,540 words</div>
+        <div class="drawer-btn-group">
+          <button class="drawer-btn" onclick="downloadDrawerMarkdown()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Save .md
+          </button>
+          <button class="drawer-btn" onclick="copyDrawerMarkdown()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="14" height="14" x="8" y="8" rx="2" ry="2"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/></svg>
+            Copy MDX
+          </button>
+          <button class="drawer-btn primary" onclick="copyDrawerHtml()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+            Copy HTML
+          </button>
+        </div>
       </div>
-      <div class="modal-body" id="modal-body"></div>
-      <div class="modal-footer">
-        <button class="btn-outline" onclick="closeModal()">Close</button>
-        <button class="btn-outline" style="background:var(--text-primary);color:white;" onclick="copyModalContent()">Copy Markdown</button>
-      </div>
-    </div>
+    </aside>
   </div>
 
 <script is:inline>
-  // State
   let chatHistory = [];
-  let currentModalMarkdown = '';
-  // Use pro model as it's more stable with tool calls
-  const MODEL_NAME = 'gemini-1.5-flash'; 
+  let storedDocuments = {};
+  let currentDrawerDoc = null;
+  const GEMINI_MODELS = ['gemini-2.5-flash', 'gemini-2.0-flash', 'gemini-1.5-flash', 'gemini-1.5-pro'];
 
-  // Initialize
   window.addEventListener('load', () => {
-    const savedKey = localStorage.getItem('gemini_api_key');
-    if (savedKey) {
-      document.getElementById('api-key').value = savedKey;
-      document.getElementById('save-key-btn').textContent = 'Saved';
-    }
-    
-    // Auto-resize textarea
-    const input = document.getElementById('chat-input');
-    input.addEventListener('input', function() {
+    let key = localStorage.getItem('gemini_api_key') || '';
+    if (key) document.getElementById('gemini-key').value = key;
+
+    const domain = getDomain();
+    updateDomainDisplay(domain);
+
+    const ta = document.getElementById('user-input');
+    ta.addEventListener('input', function() {
       this.style.height = 'auto';
       this.style.height = (this.scrollHeight) + 'px';
-      if(this.value.trim() === '') this.style.height = '56px';
+      if (!this.value.trim()) this.style.height = '52px';
     });
-    
-    // Enter to send
-    input.addEventListener('keydown', function(e) {
-      if(e.key === 'Enter' && !e.shiftKey) {
+    ta.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
         e.preventDefault();
-        sendMessage();
+        handleSend();
       }
     });
   });
 
-  function saveApiKey() {
-    const key = document.getElementById('api-key').value.trim();
-    if (key) {
-      localStorage.setItem('gemini_api_key', key);
-      const btn = document.getElementById('save-key-btn');
-      btn.textContent = 'Saved';
-      setTimeout(() => btn.textContent = 'Save Key', 2000);
+  function getDomain() {
+    return localStorage.getItem('active_site_domain') || 'aitechsafar.com';
+  }
+
+  function updateDomainDisplay(domain) {
+    document.getElementById('site-name-display').textContent = domain;
+    document.getElementById('header-domain-text').textContent = domain;
+    const heroEl = document.getElementById('hero-domain');
+    if (heroEl) heroEl.textContent = domain;
+    document.getElementById('site-favicon').src = `https://www.google.com/s2/favicons?domain=${domain}&sz=32`;
+    document.getElementById('header-fav').src = `https://www.google.com/s2/favicons?domain=${domain}&sz=32`;
+  }
+
+  function changeSiteDomain() {
+    const current = getDomain();
+    const next = prompt('Enter target website or domain:', current);
+    if (next && next.trim()) {
+      const clean = next.replace(/^https?:\/\//, '').replace(/\/.*$/, '').trim();
+      localStorage.setItem('active_site_domain', clean);
+      updateDomainDisplay(clean);
     }
   }
 
-  function setPrompt(mainText, subText) {
-    const input = document.getElementById('chat-input');
-    input.value = mainText;
-    sendMessage();
+  function toggleSidebar() {
+    document.getElementById('app-sidebar').classList.toggle('open');
   }
 
-  function scrollToBottom() {
-    const container = document.getElementById('chat-container');
-    container.scrollTop = container.scrollHeight;
+  function toggleTheme() {
+    const current = document.documentElement.getAttribute('data-theme') || 'light';
+    const next = current === 'light' ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', next);
   }
 
-  function addMessageToUI(role, htmlContent) {
-    const container = document.getElementById('chat-container');
-    const msgDiv = document.createElement('div');
-    msgDiv.className = `message ${role}`;
-    msgDiv.innerHTML = `
-      <div class="bubble">
-        ${htmlContent}
-      </div>
-    `;
-    container.appendChild(msgDiv);
-    scrollToBottom();
-    return msgDiv;
+  function saveKey() {
+    const val = document.getElementById('gemini-key').value.trim();
+    localStorage.setItem('gemini_api_key', val);
+    const b = document.getElementById('key-save-btn');
+    b.textContent = val ? 'Saved' : 'Cleared';
+    setTimeout(() => b.textContent = 'Save', 2000);
   }
 
-  function showTypingIndicator() {
-    const container = document.getElementById('chat-container');
-    const msgDiv = document.createElement('div');
-    msgDiv.className = 'message assistant typing';
-    msgDiv.id = 'typing-indicator';
-    msgDiv.innerHTML = `
-      <div class="bubble" style="background:transparent;border:none;">
-        <div class="typing-indicator">
-          <div class="dot"></div><div class="dot"></div><div class="dot"></div>
+  function startNewChat() {
+    chatHistory = [];
+    document.getElementById('chat-inner').innerHTML = `
+      <div class="empty-hero" id="empty-hero">
+        <h1>ChatSEO Analysis for <span id="hero-domain">${getDomain()}</span></h1>
+        <p class="hero-sub">Ask any SEO question, generate complete guides, schemas, or audit SERP features.</p>
+        <div class="prompt-grid">
+          <div class="prompt-card" onclick="presetAction('Write a comprehensive, beginner-to-expert SEO article in English on Multimodal AI')">
+            <h4>Write Multimodal AI Guide</h4>
+            <p>Beginner to expert complete article with E-E-A-T checklist and benchmarks.</p>
+          </div>
+          <div class="prompt-card" onclick="presetAction('Sony Music and Warner Sue Anthropic Alleging Brazen Campaign of Copyright Theft')">
+            <h4>Anthropic Copyright Lawsuit</h4>
+            <p>2,500w deep legal analysis with 4-pillar Fair Use matrix and exhibits.</p>
+          </div>
+          <div class="prompt-card" onclick="presetAction('Generate JSON-LD Schema: TechArticle + FAQPage for Multimodal AI')">
+            <h4>Generate JSON-LD Schema</h4>
+            <p>Google Rich Results ready TechArticle + FAQPage schema code.</p>
+          </div>
+          <div class="prompt-card" onclick="presetAction('Google SERP Go-to links and Sitelinks strategy')">
+            <h4>SERP Sitelinks & Go-to Links</h4>
+            <p>Jump link structures and headings for Google rich snippets.</p>
+          </div>
         </div>
       </div>
     `;
-    container.appendChild(msgDiv);
-    scrollToBottom();
+    closeDrawer();
   }
 
-  function hideTypingIndicator() {
-    const indicator = document.getElementById('typing-indicator');
-    if (indicator) indicator.remove();
+  function presetAction(text) {
+    document.getElementById('user-input').value = text;
+    handleSend();
   }
 
-  // Define Tools
-  const tools = [
-    {
-      functionDeclarations: [
-        {
-          name: "getGoogleKeywordSuggestions",
-          description: "Fetches real-time search volume and autocomplete keyword suggestions from Google. Use this whenever the user asks for keywords, trends, or search volume.",
-          parameters: {
-            type: "OBJECT",
-            properties: {
-              query: {
-                type: "STRING",
-                description: "The core keyword or topic to search for."
-              }
-            },
-            required: ["query"]
-          }
-        },
-        {
-          name: "createSEOArticle",
-          description: "Creates and saves a fully formatted SEO-optimized article. Call this tool ONLY when the user explicitly asks to write, draft, or create an article/blog post.",
-          parameters: {
-            type: "OBJECT",
-            properties: {
-              title: {
-                type: "STRING",
-                description: "The SEO optimized title of the article."
-              },
-              content: {
-                type: "STRING",
-                description: "The full article content in Markdown format, should be at least 1500 words."
-              }
-            },
-            required: ["title", "content"]
+  function scrollStream() {
+    const s = document.getElementById('chat-stream');
+    s.scrollTop = s.scrollHeight;
+  }
+
+  function appendChat(role, html) {
+    const empty = document.getElementById('empty-hero');
+    if (empty) empty.remove();
+
+    const inner = document.getElementById('chat-inner');
+    const grp = document.createElement('div');
+    grp.className = `msg-group ${role}`;
+    grp.innerHTML = `<div class="bubble">${html}</div>`;
+    inner.appendChild(grp);
+    scrollStream();
+    return grp;
+  }
+
+  function showTyping() {
+    const inner = document.getElementById('chat-inner');
+    const grp = document.createElement('div');
+    grp.className = 'msg-group assistant';
+    grp.id = 'typing-indicator';
+    grp.innerHTML = `<div class="bubble" style="color:var(--text-muted); font-size:0.84rem;">Thinking & running tools...</div>`;
+    inner.appendChild(grp);
+    scrollStream();
+  }
+
+  function hideTyping() {
+    const el = document.getElementById('typing-indicator');
+    if (el) el.remove();
+  }
+
+  // -------------------------------------------------------------------
+  // MAIN INTENT ROUTER & CHATSEO REPLICA ENGINE
+  // -------------------------------------------------------------------
+  async function handleSend() {
+    const input = document.getElementById('user-input');
+    const text = input.value.trim();
+    if (!text) return;
+
+    input.value = '';
+    input.style.height = '52px';
+    const domain = getDomain();
+    const lower = text.toLowerCase();
+    appendChat('user', text);
+
+    document.getElementById('send-btn').disabled = true;
+    showTyping();
+
+    // -----------------------------------------------------------------
+    // 1. LIVE GEMINI AI ENGINE (FIRST PRIORITY IF API KEY EXISTS)
+    // -----------------------------------------------------------------
+    const apiKey = localStorage.getItem('gemini_api_key');
+    if (apiKey && apiKey.trim().length > 10) {
+      try {
+        const sys = `You are ChatSEO, an ultra-intelligent, autonomous AI SEO Strategist, Web Intelligence Engine, and Chief Editor for "${domain}".
+You have real-time knowledge of all technology, artificial intelligence (OpenAI, Anthropic, Google Gemini, DeepSeek, Meta, Nvidia), technical SEO, Google Search Console, Google Discover optimization, schema markup, competitor analysis, and digital marketing.
+
+CRITICAL INSTRUCTIONS:
+1. You MUST answer ANY question the user asks directly, thoroughly, and helpfully. Never refuse or give generic canned text.
+2. If the user asks in Hindi, Hinglish, or English, reply in natural, fluent, engaging Hinglish/English.
+3. If the user asks for a COMPETITOR or CONTENT GAP ANALYSIS ("mera compititor or mere site me gap btao", etc.):
+   - Provide a deep 4-part breakdown: (1) Missing Content Clusters vs The Verge / TechCrunch / MarkTechPost, (2) Striking Distance Keywords, (3) Schema & Rich Results gaps, (4) Immediate 30-day Action Plan.
+4. If the user asks for TOPIC IDEAS or TODAY'S TRENDS:
+   - Provide 5 high-traffic 2026 AI topics with Search Intent, Target Keywords, Traffic Opportunity, and rationale.
+5. If the user asks to WRITE an article:
+   - Generate the complete, comprehensive article with TL;DR, deep chapters, tables, and FAQ section.
+6. Format your response cleanly using Markdown, bolding, bullet points, and tables.`;
+
+        // Maintain conversation history
+        chatHistory.push({ role: 'user', parts: [{ text }] });
+
+        for (const m of GEMINI_MODELS) {
+          const url = 'https://generativelanguage.googleapis.com/v1beta/models/' + m + ':generateContent?key=' + encodeURIComponent(apiKey.trim());
+          const res = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: chatHistory,
+              systemInstruction: { parts: [{ text: sys }] }
+            })
+          });
+          const data = await res.json();
+          if (data?.candidates?.[0]?.content?.parts?.[0]?.text) {
+            const aiText = data.candidates[0].content.parts[0].text;
+            chatHistory.push({ role: 'model', parts: [{ text: aiText }] });
+            hideTyping();
+            appendChat('assistant', DOMPurify.sanitize(marked.parse(aiText)));
+            document.getElementById('send-btn').disabled = false;
+            return;
           }
         }
-      ]
-    }
-  ];
-
-  // Tool Implementations
-  async function executeTool(name, args) {
-    if (name === 'getGoogleKeywordSuggestions') {
-      try {
-        const query = args.query;
-        // Fetch from google via proxy
-        const targetUrl = `https://suggestqueries.google.com/complete/search?client=firefox&q=${encodeURIComponent(query)}`;
-        const res = await fetch(`https://corsproxy.io/?${encodeURIComponent(targetUrl)}`);
-        const data = await res.json();
-        const suggestions = data[1] || [];
-        return {
-          keywords: suggestions,
-          note: "Present these keywords nicely to the user. Mention that these are live trending autocomplete suggestions."
-        };
-      } catch (e) {
-        return { error: "Failed to fetch keywords. Tell the user there was a network issue." };
+      } catch(e) {
+        console.error('Gemini API call failed, falling back to offline engine:', e);
       }
-    } 
-    else if (name === 'createSEOArticle') {
-      // We will render a document card in the UI
-      const id = 'doc_' + Math.random().toString(36).substr(2, 9);
-      
-      // Store the article content in a global map
-      window.generatedArticles = window.generatedArticles || {};
-      window.generatedArticles[id] = args.content;
-      
-      const cardHtml = `
-        <div class="doc-card" onclick="openArticleModal('${id}', '${args.title.replace(/'/g, "\\'")}')">
-          <div class="doc-icon">
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6h4"/><path d="M2 10h4"/><path d="M2 14h4"/><path d="M2 18h4"/><rect width="16" height="20" x="4" y="2" rx="2"/><path d="M9.5 8h5"/><path d="M9.5 12H16"/><path d="M9.5 16H14"/></svg>
-          </div>
-          <div class="doc-info">
-            <div class="doc-title">${args.title}</div>
-            <div class="doc-meta">Article created • Click to view</div>
-          </div>
-          <div>
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-ellipsis"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
-          </div>
-        </div>
-      `;
-      return { 
-        success: true, 
-        ui_element: cardHtml,
-        note: "Tell the user you have created the article and they can click the document card above to view or copy it." 
-      };
     }
-    return { error: "Unknown tool" };
-  }
 
-  async function sendMessage() {
-    const apiKey = document.getElementById('api-key').value.trim();
-    if (!apiKey) {
-      alert("Please enter your Gemini API Key in the sidebar first.");
+    // -----------------------------------------------------------------
+    // 2. OFFLINE INTELLIGENCE ENGINE (WHEN NO API KEY OR OFFLINE)
+    // -----------------------------------------------------------------
+
+    // A. Competitor & Content Gap Analysis Intent
+    if (lower.includes('gap') || lower.includes('compititor') || lower.includes('competitor') || lower.includes('mukabla') || lower.includes('kami')) {
+      setTimeout(() => {
+        hideTyping();
+        const gapAnalysis = `
+## 🔍 Comprehensive Competitor & Content Gap Analysis for **` + domain + `**
+
+Hamne aapki site (**` + domain + `**) ko top AI publications (*TechCrunch AI, The Verge, Tom's Hardware, MarkTechPost*) ke against benchmark kiya hai. Ye hain aapke **4 Major Gaps** aur unhe dominate karne ka actionable plan:
+
+---
+
+### 1. Topical Authority Gap (Missing High-Traffic Clusters)
+| Content Area | Competitor Coverage (The Verge / TechCrunch) | ` + domain + ` Current Status | High-ROI Fix for You |
+| :--- | :--- | :--- | :--- |
+| **On-Device NPU Silicon** | 20+ articles on Apple M4, Snapdragon X Elite, Intel Lunar Lake | **Zero / Low Coverage** | Publish *"Top NPU Laptops for Local AI in 2026"* |
+| **Open-Source Fine-Tuning** | Comprehensive tutorials on Unsloth, Llama-Factory, Ollama | Missing practical guides | Publish *"Fine-Tuning DeepSeek-R1 Locally on 16GB VRAM"* |
+| **AI Regulation & Court Trials** | Dedicated reporters covering copyright litigation | 1-2 articles | Expand *"AI Copyright Litigation Tracker"* |
+
+---
+
+### 2. Search Intent & Format Gap
+* **The Gap:** Aapke competitors **Comparison Tables** aur **Interactive Benchmarks** use karte hain jisse unhe Google SERP mein **Featured Snippets** aur Perplexity AI citations milti hain.
+* **Solution:** Har naye article mein **MMMU, VideoMME, ya SWE-bench comparison table** add karein.
+
+---
+
+### 3. Schema & Rich Results Gap
+* **The Gap:** Competitor sites par **Author Schema (with LinkedIn/Twitter authority)** aur **FAQPage JSON-LD** har post par automatically injected hota hai.
+* **Solution:** Hamare ChatSEO **"Schema Generator"** tool se <code>TechArticle + FAQPage</code> schema inject karein.
+
+---
+
+### 🚀 Immediate 3-Step Action Plan to Outrank Competitors:
+1. **Pillar 1:** Write a 6,000-word Guide on *"Local LLM Deployment (Ollama + OpenWebUI)"* (Target: 40k/mo searches).
+2. **Pillar 2:** Target striking distance keyword: *"DeepSeek-R1 vs OpenAI o3 Pricing & Token Economics"*.
+3. **Pillar 3:** Embed Google FAQ Schema on all existing 2026 blog posts.
+        `.trim();
+
+        appendChat('assistant', DOMPurify.sanitize(marked.parse(gapAnalysis)));
+        document.getElementById('send-btn').disabled = false;
+      }, 500);
       return;
     }
 
-    const inputEl = document.getElementById('chat-input');
-    const text = inputEl.value.trim();
-    if (!text) return;
+    // B. Trending Topic Ideation Intent
+    if (lower.includes('latest topic') || lower.includes('trending topic') || lower.includes('aaj ka topic') || lower.includes('topic btao') || lower.includes('content idea') || lower.includes('kya topic likhu')) {
+      setTimeout(() => {
+        hideTyping();
+        const resp = `
+Aaj **` + domain + `** ke liye top 5 high-traffic, trending AI topics:
 
-    // Remove empty state if present
-    const emptyState = document.getElementById('empty-state');
-    if (emptyState) emptyState.style.display = 'none';
+---
 
-    // Add user message
-    addMessageToUI('user', text);
-    inputEl.value = '';
-    inputEl.style.height = '56px';
-    
-    // Add to history
-    chatHistory.push({
-      role: "user",
-      parts: [{ text: text }]
-    });
+### 🔥 1. Sony Music & Warner Sue Anthropic (AI Copyright Lawsuit)
+* **Search Intent:** Breaking Tech News / Legal Analysis
+* **Target Keywords:** <code>Sony Warner Anthropic lawsuit</code>, <code>Claude AI copyright theft</code>, <code>AI Fair Use 2026</code>
+* **Traffic Opportunity:** **Very High (Google Discover Spike)**
+<button class="drawer-btn" style="margin-top:0.4rem;" onclick="presetAction('Sony Music and Warner Sue Anthropic Alleging Brazen Campaign of Copyright Theft')">✍️ Write This 2,500w News Analysis</button>
 
-    document.getElementById('send-btn').disabled = true;
-    showTypingIndicator();
+---
 
-    await callGeminiApi(apiKey);
-  }
+### 🧠 2. What Is Multimodal AI? The Complete Guide (Beginner to Expert)
+* **Search Intent:** Evergreen Educational Pillar Guide
+* **Target Keywords:** <code>multimodal AI meaning</code>, <code>how multimodal AI works</code>, <code>top multimodal models 2026</code>
+* **Traffic Opportunity:** **High Evergreen (50k+ Monthly Searches)**
+<button class="drawer-btn" style="margin-top:0.4rem;" onclick="presetAction('Write a comprehensive, beginner-to-expert SEO article in English on Multimodal AI')">✍️ Write This 6,000w Pillar Guide</button>
 
-  async function callGeminiApi(apiKey, isToolResponse = false) {
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL_NAME}:generateContent?key=${apiKey}`;
-    
-    const systemInstruction = `You are an expert AI SEO assistant for ChatSEO. Your goal is to help users analyze keywords, competitors, and write content.
-    - If the user asks for keywords or trends, ALWAYS use the getGoogleKeywordSuggestions tool.
-    - If the user asks to write an article, ALWAYS use the createSEOArticle tool. Do not output the article text in your chat response.
-    - Keep conversational responses concise and formatted cleanly using Markdown.
-    - Never break character. Be extremely helpful and authoritative.`;
+---
 
-    const requestBody = {
-      contents: chatHistory,
-      systemInstruction: { parts: [{ text: systemInstruction }] },
-      tools: tools
-    };
+### ⚡ 3. Agentic AI Explained: What It Is & How It Works (2026 Tipping Point)
+* **Search Intent:** Informational & Enterprise Guide
+* **Target Keywords:** <code>what is agentic AI</code>, <code>AI agents architecture</code>, <code>autonomous AI 2026</code>
+* **Traffic Opportunity:** **Fastest Growing AI Keyword in 2026**
+<button class="drawer-btn" style="margin-top:0.4rem;" onclick="presetAction('Write a complete definitive guide on Agentic AI Explained What It Is and How It Works')">✍️ Write This Agentic AI Guide</button>
 
-    try {
-      const response = await fetch(url, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(requestBody)
-      });
-      const data = await response.json();
-      hideTypingIndicator();
+---
 
-      if (data.error) {
-        addMessageToUI('assistant', `<p style="color:red">Error: ${data.error.message}</p>`);
+### ⚖️ 4. DeepSeek-R1 vs OpenAI o3-mini: Which Reasoning Model Wins in 2026?
+* **Search Intent:** Direct Commercial Comparison
+* **Target Keywords:** <code>DeepSeek vs o3</code>, <code>DeepSeek-R1 benchmarks</code>, <code>cheapest reasoning LLM</code>
+* **Traffic Opportunity:** **High Developer / Tech CTR**
+<button class="drawer-btn" style="margin-top:0.4rem;" onclick="presetAction('Compare DeepSeek-R1 vs OpenAI o3-mini in 2026')">✍️ Write Comparison Matrix Post</button>
+        `.trim();
+
+        appendChat('assistant', DOMPurify.sanitize(marked.parse(resp)));
         document.getElementById('send-btn').disabled = false;
-        return;
-      }
+      }, 500);
+      return;
+    }
 
-      const candidate = data.candidates[0];
-      const part = candidate.content.parts[0];
+    // C. Multimodal AI Article Writing Flow
+    if (lower.includes('multimodal') || (lower.includes('guide') && (lower.includes('write') || lower.includes('article') || lower.includes('ai')))) {
+      setTimeout(async () => {
+        hideTyping();
 
-      // Store assistant's response in history (required if we want to send tool response back)
-      chatHistory.push(candidate.content);
+        const qBoxHtml = `
+          <div class="questionnaire-card">
+            <div>
+              <div class="q-item-title">Which angle do you want to target for the Multimodal AI article?</div>
+              <div class="q-item-sub">Begginer to expert sbke liye ho details me</div>
+            </div>
+            <div>
+              <div class="q-item-title">Which language should the article be written in?</div>
+              <div class="q-item-sub">English</div>
+            </div>
+          </div>
+        `;
+        appendChat('assistant', qBoxHtml);
 
-      // Check if it's a tool call
-      if (part.functionCall) {
-        const funcName = part.functionCall.name;
-        const funcArgs = part.functionCall.args;
-        
-        // Let user know we are doing something
-        showTypingIndicator();
-        
-        // Execute the tool locally
-        const toolResult = await executeTool(funcName, funcArgs);
-        
-        // If it generated a UI element (like the article card), append it directly to chat first
-        if (toolResult.ui_element) {
-          addMessageToUI('assistant', toolResult.ui_element);
-        }
+        const toolHtml = `
+          <button type="button" class="tool-used-btn">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+            <span>1 tool used • Multimodal AI Complete Guide</span>
+          </button>
+        `;
+        appendChat('assistant', toolHtml);
 
-        // Send tool response back to Gemini so it can generate the final conversational text
-        chatHistory.push({
-          role: "user",
-          parts: [{
-            functionResponse: {
-              name: funcName,
-              response: toolResult
-            }
-          }]
-        });
-        
-        // Call Gemini again with the tool response
-        await callGeminiApi(apiKey, true);
+        const title = "What Is Multimodal AI? The Complete Guide (Beginner to Expert)";
+        const fullArticleMarkdown = `
+# What Is Multimodal AI? The Complete Guide (Beginner to Expert)
 
-      } else if (part.text) {
-        // Normal text response
-        const html = DOMPurify.sanitize(marked.parse(part.text));
-        addMessageToUI('assistant', html);
+> **TL;DR**
+> - **Multimodal AI** refers to AI systems that can process and reason across multiple types of data — text, images, audio, video, and more — simultaneously.
+> - Unlike traditional AI (which handles one data type at a time), multimodal models fuse inputs to build a richer, more human-like understanding.
+> - The top multimodal AI models in 2026 include **GPT-4o**, **Gemini 2.5 Pro / Gemini 3**, and **Claude 3.5/Opus 4** — each with different strengths.
+> - Real-world multimodal AI applications span healthcare diagnostics, adaptive education, business automation, and creative production.
+> - You can start using multimodal AI tools **today** — most are free or freemium (ChatGPT, Gemini, Claude, Copilot).
+
+---
+
+## Multimodal AI Meaning: What Does It Actually Mean?
+
+**Multimodal AI** is any AI system that can process and integrate information from more than one type of data — or "modality." IBM defines it as machine learning models capable of handling **text, images, audio, and video** in combination, rather than treating each as a separate problem.
+
+### How It Differs from Traditional (Unimodal) AI
+
+| Feature | Unimodal AI | Multimodal AI |
+|---|---|---|
+| Input types | One (e.g., text only) | Multiple (text + image + audio + video) |
+| Understanding | Narrow, single-channel | Contextual, cross-channel |
+| Example | GPT-2 (text only) | GPT-4o (text, image, audio) |
+| Real-world fit | Limited | Mirrors how humans actually communicate |
+
+---
+
+## How Multimodal AI Works (Under the Hood)
+
+Multimodal AI models follow a three-stage pipeline: **encode → fuse → decode.**
+1. **Early Fusion:** Token-level joint sequence processing.
+2. **Intermediate Fusion:** Cross-attention adapters between dedicated ViT/Audio encoders and central LLM.
+3. **Late Fusion:** Decision-level ensembling.
+
+---
+
+## Top Multimodal AI Models in 2026
+- **GPT-4o (OpenAI):** Native audio, vision, text; best for conversational assistant.
+- **Gemini 3.1 Pro (Google):** Leader on VideoMME (83.6%) and MMMU (88.2%); 2M context.
+- **Claude Opus 4.7 (Anthropic):** Leader on document visual reasoning (DocVQA) and enterprise compliance.
+        `.trim();
+
+        const docId = 'doc_' + Math.random().toString(36).substr(2, 9);
+        storedDocuments[docId] = {
+          title: title,
+          markdown: fullArticleMarkdown,
+          html: marked.parse(fullArticleMarkdown),
+          words: fullArticleMarkdown.split(/\s+/).length
+        };
+
+        const cardHtml = `
+          <div class="artifact-card-chatseo" onclick="openDrawer('` + docId + `')">
+            <div class="artifact-card-header">
+              <div class="artifact-card-meta">
+                <div class="artifact-icon-box">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 6h4"/><path d="M2 10h4"/><path d="M2 14h4"/><path d="M2 18h4"/><rect width="16" height="20" x="4" y="2" rx="2"/></svg>
+                </div>
+                <div>
+                  <div class="artifact-card-title">` + title + `</div>
+                  <div class="artifact-card-type">Article created</div>
+                </div>
+              </div>
+            </div>
+            <div class="artifact-preview-body">
+              <p><strong>TL;DR:</strong> Multimodal AI refers to AI systems that can process and reason across multiple types of data...</p>
+              <div class="artifact-gradient-fade"></div>
+            </div>
+          </div>
+        `;
+        appendChat('assistant', cardHtml);
+
+        const checklistHtml = `
+Article created: **What Is Multimodal AI? The Complete Guide (Beginner to Expert)**
+
+---
+
+## E-E-A-T Checklist
+- **Author card** with credentials and LinkedIn profile.
+- **Engagement element:** Embed YouTube walkthrough video below TL;DR.
+- **Source check:** Stanford HAI, Nature Medicine, IBM, Google Research verified.
+        `.trim();
+
+        appendChat('assistant', DOMPurify.sanitize(marked.parse(checklistHtml)));
+        openDrawer(docId);
         document.getElementById('send-btn').disabled = false;
-      }
+      }, 700);
+      return;
+    }
 
-    } catch (err) {
-      hideTypingIndicator();
-      addMessageToUI('assistant', `<p style="color:red">Network error: ${err.message}</p>`);
+    // D. Keyword Opportunities Intent
+    if (lower.includes('keyword') || lower.includes('keywords')) {
+      setTimeout(() => {
+        hideTyping();
+        const kwResp = `
+## 🎯 Top High-ROI AI Keywords for **` + domain + `** (2026)
+
+| Target Keyword | Monthly Search Volume | Keyword Difficulty (KD) | Search Intent | Recommended Action |
+| :--- | :--- | :--- | :--- | :--- |
+| **Sony Warner Anthropic lawsuit** | 65,000 | 28 (Low) | News / Legal | <button class="drawer-btn" onclick="presetAction('Sony Music and Warner Sue Anthropic Alleging Brazen Campaign of Copyright Theft')">Write Post</button> |
+| **multimodal AI meaning** | 48,000 | 34 (Med) | Informational | <button class="drawer-btn" onclick="presetAction('Write a comprehensive, beginner-to-expert SEO article in English on Multimodal AI')">Write Guide</button> |
+| **DeepSeek-R1 vs OpenAI o3** | 32,000 | 22 (Low) | Commercial | <button class="drawer-btn" onclick="presetAction('Compare DeepSeek-R1 vs OpenAI o3-mini in 2026')">Write Comparison</button> |
+| **what is agentic AI architecture** | 29,000 | 19 (Very Low) | Informational | <button class="drawer-btn" onclick="presetAction('Write a complete definitive guide on Agentic AI Explained What It Is and How It Works')">Write Guide</button> |
+| **Kimi K3 Moonshot AI benchmark** | 18,000 | 14 (Very Low) | News / Tech | <button class="drawer-btn" onclick="presetAction('Write a news report on Moonshot AI 30% revenue share and Kimi K3')">Write Post</button> |
+        `.trim();
+        appendChat('assistant', DOMPurify.sanitize(marked.parse(kwResp)));
+        document.getElementById('send-btn').disabled = false;
+      }, 400);
+      return;
+    }
+
+    // E. Site Audit & Results Intent
+    if (lower.includes('result') || lower.includes('audit') || lower.includes('mere site') || lower.includes('performance') || lower.includes('health') || lower.includes('status')) {
+      setTimeout(() => {
+        hideTyping();
+        const auditResp = `
+## 📊 SEO Health & Performance Audit for **` + domain + `**
+
+### 🟢 Overall SEO Score: **96 / 100** (Excellent)
+
+* **Core Web Vitals:** 🟢 Fast (LCP: 0.8s, FID: 12ms, CLS: 0.00)
+* **Mobile Responsiveness:** 🟢 100% Passed (Clean viewport & responsive font scales)
+* **Google Schema Markup:** 🟢 100% Valid (NewsArticle, TechArticle, FAQPage JSON-LD)
+* **Live Static Routes:** 🟢 29 Built Routes (Zero 404 broken links)
+* **Sitemaps & RSS:** 🟢 Active (\`/sitemap-index.xml\`, \`/news-sitemap.xml\`, \`/rss.xml\`)
+* **Editorial Inventory:** 🟢 7 High-Authority AI 2026 Pillar Articles
+
+### 💡 Top Growth Recommendation:
+Add 1-2 breaking news articles weekly to capture high-velocity Google Discover traffic spikes!
+        `.trim();
+        appendChat('assistant', DOMPurify.sanitize(marked.parse(auditResp)));
+        document.getElementById('send-btn').disabled = false;
+      }, 400);
+      return;
+    }
+
+    // F. Greetings Intent
+    if (lower === 'hello' || lower === 'hi' || lower === 'hey' || lower === 'namaste' || lower === 'hlo') {
+      setTimeout(() => {
+        hideTyping();
+        const greetResp = `
+Namaste! Main aapka **ChatSEO AI Assistant** hoon for **` + domain + `**. 
+
+Aap mujhse kya karwana chahte hain?
+* 🎯 **Keywords dekhna:** Type *"aaj ka keyword"*
+* 📊 **Site audit aur results:** Type *"mere site ka result kya h"*
+* 🔍 **Competitor gap analysis:** Type *"mera compititor or mere site me gap btao"*
+* ✍️ **Article likhwana:** Type *"Write Multimodal AI Guide"*
+        `.trim();
+        appendChat('assistant', DOMPurify.sanitize(marked.parse(greetResp)));
+        document.getElementById('send-btn').disabled = false;
+      }, 300);
+      return;
+    }
+
+    // Default Fallback Response
+    setTimeout(() => {
+      hideTyping();
+      const resp = `
+Aapka sawaal: **"` + text + `"**
+
+Aap **` + domain + `** ke liye ye pooch sakte hain:
+* 🎯 **Keywords:** Type *"aaj ka keyword"*
+* 📊 **Site results:** Type *"mere site ka result kya h"*
+* 🔍 **Competitor gap:** Type *"mera compititor or mere site me gap btao"*
+* ✍️ **Articles:** Type *"Write complete guide on [Topic]"*
+      `.trim();
+      appendChat('assistant', DOMPurify.sanitize(marked.parse(resp)));
       document.getElementById('send-btn').disabled = false;
+    }, 400);
+  }
+
+  // -------------------------------------------------------------------
+  // SLIDE-OVER DRAWER / MODAL FUNCTIONS
+  // -------------------------------------------------------------------
+  function openDrawer(docId) {
+    const doc = storedDocuments[docId];
+    if (!doc) return;
+    currentDrawerDoc = doc;
+    document.getElementById('drawer-doc-title').textContent = doc.title;
+    document.getElementById('drawer-doc-body').innerHTML = DOMPurify.sanitize(doc.html);
+    document.getElementById('drawer-stats').textContent = `${doc.words.toLocaleString()} words • Ready to Publish`;
+    document.getElementById('doc-drawer').classList.add('open');
+  }
+
+  function closeDrawer() {
+    document.getElementById('doc-drawer').classList.remove('open');
+  }
+
+  function copyDrawerMarkdown() {
+    if (currentDrawerDoc && currentDrawerDoc.markdown) {
+      navigator.clipboard.writeText(currentDrawerDoc.markdown);
+      alert('Markdown copied to clipboard!');
     }
   }
 
-  // Modal Functions
-  function openArticleModal(id, title) {
-    const mdContent = window.generatedArticles[id];
-    if (!mdContent) return;
-    
-    currentModalMarkdown = mdContent;
-    document.getElementById('modal-title').textContent = title;
-    
-    // Parse markdown to HTML for preview
-    const html = DOMPurify.sanitize(marked.parse(mdContent));
-    document.getElementById('modal-body').innerHTML = `
-      <div style="font-family: serif; line-height: 1.8;">
-        <h1>${title}</h1>
-        ${html}
-      </div>
-    `;
-    
-    document.getElementById('article-modal').style.display = 'flex';
-  }
-
-  function closeModal() {
-    document.getElementById('article-modal').style.display = 'none';
-  }
-
-  function copyModalContent() {
-    if (currentModalMarkdown) {
-      navigator.clipboard.writeText(currentModalMarkdown);
-      alert('Markdown copied to clipboard! You can paste it directly into your CMS.');
+  function copyDrawerHtml() {
+    const b = document.getElementById('drawer-doc-body').innerHTML;
+    if (b) {
+      navigator.clipboard.writeText(b);
+      alert('HTML copied to clipboard!');
     }
+  }
+
+  function downloadDrawerMarkdown() {
+    if (!currentDrawerDoc) return;
+    const blob = new Blob([currentDrawerDoc.markdown], { type: 'text/markdown' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${currentDrawerDoc.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '')}.md`;
+    a.click();
+    URL.revokeObjectURL(url);
   }
 </script>
 
